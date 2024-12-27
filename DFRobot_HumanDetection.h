@@ -12,6 +12,7 @@
 #ifndef _DFROBOT_HUMAN_DETECTION_
 #define _DFROBOT_HUMAN_DETECTION_
 #include "Arduino.h"
+#include "esphome.h"
 
 #if (defined ARDUINO_AVR_UNO) && (defined ESP8266)
 #include "SoftwareSerial.h"
@@ -225,7 +226,7 @@ public:
      * @brief Constructor of the millimeter-wave human detection sensor
      * @param s Serial reception object
      */
-    DFRobot_HumanDetection(Stream *s);
+    DFRobot_HumanDetection(esphome::uart::UARTComponent *s);
     ~DFRobot_HumanDetection() {};
 
     /**
@@ -496,7 +497,7 @@ private:
      */
     uint8_t getData(uint8_t con, uint8_t cmd, uint16_t len, uint8_t *senData, uint8_t *retData);
     uint8_t sumData(uint8_t len, uint8_t *buf);
-    Stream *_s = NULL;
+    esphome::uart::UARTComponent *_s = NULL;
     sCommandBuffer commandBuffer;
     sResponseBuffer responseBuffer;
 };
