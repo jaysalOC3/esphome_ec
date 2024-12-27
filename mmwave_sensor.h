@@ -4,9 +4,8 @@
 #include "esphome.h"
 #include "DFRobot_HumanDetection.h"
 
-class MmWaveSensor : public PollingComponent {
+class MmWaveSensor : public Component, public UARTDevice, public Sensor {
  public:
-  UARTComponent *uart_;
   DFRobot_HumanDetection sensor;
 
   Sensor *presence_sensor = new Sensor();
@@ -16,7 +15,7 @@ class MmWaveSensor : public PollingComponent {
   Sensor *heart_rate_sensor = new Sensor();
 
   MmWaveSensor(UARTComponent *uart)
-      : PollingComponent(1000), uart_(uart), sensor(&uart_->get_stream()) {} 
+      : Component(), UARTDevice(uart), sensor(&uart->get_stream()) {} 
 
   void setup() override {
     ESP_LOGI("MmWaveSensor", "Initializing sensor...");
@@ -31,6 +30,18 @@ class MmWaveSensor : public PollingComponent {
       ESP_LOGE("MmWaveSensor", "Failed to configure work mode!");
     } else {
       ESP_LOGI("MmWaveSensor", "Work mode configured successfully.");
+    }
+  }
+
+  void loop() override {
+    read_uart_data();
+  }
+
+  void read_uart_data() {
+    while (available()) {
+      uint8_t data = read();
+      // Process the UART data and convert it into sensor readings
+      // This is a placeholder for the actual implementation
     }
   }
 
