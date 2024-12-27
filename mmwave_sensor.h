@@ -42,6 +42,14 @@ class MmWaveSensor : public Component, public UARTDevice, public Sensor {
       uint8_t data = read();
       // Process the UART data and convert it into sensor readings
       // This is a placeholder for the actual implementation
+      // Error handling for different types of errors and meaningful error messages
+      if (data == 0xFF) {
+        ESP_LOGE("MmWaveSensor", "Communication error!");
+      } else if (data == 0xFE) {
+        ESP_LOGE("MmWaveSensor", "Data validation error!");
+      } else {
+        // Process valid data
+      }
     }
   }
 
