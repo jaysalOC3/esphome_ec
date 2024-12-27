@@ -12,7 +12,7 @@
 #include "DFRobot_HumanDetection.h"
 #include "stdio.h"
 
-DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : _s(s)
+DFRobot_HumanDetection::DFRobot_HumanDetection(esphome::uart::UARTComponent *s) : _s(s)
 {
 }
 
@@ -45,7 +45,7 @@ uint8_t DFRobot_HumanDetection::configWorkMode(eWorkMode mode)
         {
             cmdBuf[6] = mode;
             cmdBuf[7] = sumData(7, cmdBuf);
-            _s->write(cmdBuf, 10);
+            _s->write_array(cmdBuf, 10);
 
             delay(10000); // Waiting for mode switch to start
 
@@ -806,7 +806,7 @@ uint8_t DFRobot_HumanDetection::getData(uint8_t con, uint8_t cmd, uint16_t len, 
             {
                 _s->read();
             }
-            _s->write(cmdBuf, 9 + len); 
+            _s->write_array(cmdBuf, 9 + len); 
             timeStart1 = millis();
         }
 
