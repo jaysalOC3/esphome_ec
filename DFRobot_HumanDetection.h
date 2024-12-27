@@ -81,6 +81,22 @@ typedef struct
 
 } sSleepStatistics;
 
+/**
+ * @brief Command buffer structure
+ */
+typedef struct
+{
+    uint8_t cmdBuf[20];
+} sCommandBuffer;
+
+/**
+ * @brief Response buffer structure
+ */
+typedef struct
+{
+    uint8_t retData[20];
+} sResponseBuffer;
+
 class DFRobot_HumanDetection
 {
 public:
@@ -481,6 +497,8 @@ private:
     uint8_t getData(uint8_t con, uint8_t cmd, uint16_t len, uint8_t *senData, uint8_t *retData);
     uint8_t sumData(uint8_t len, uint8_t *buf);
     Stream *_s = NULL;
+    sCommandBuffer commandBuffer;
+    sResponseBuffer responseBuffer;
 };
 
 #endif
