@@ -7,7 +7,7 @@
 namespace esphome {
 namespace mmwave_sensor {
 
-class EmptyUARTSensor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
+class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
  public:
   void setup() override;
   void update() override;

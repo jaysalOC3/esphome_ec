@@ -6,19 +6,19 @@ namespace mmwave_sensor {
 
 static const char *TAG = "mmwave_sensor.sensor";
 
-void EmptyUARTSensor::setup() {
+void MMWaveSensor::setup() {
 
 }
 
-void EmptyUARTSensor::update() {
+void MMWaveSensor::update() {
 
 }
 
-void EmptyUARTSensor::loop() {
+void MMWaveSensor::loop() {
 
 }
 
-void EmptyUARTSensor::dump_config(){
+void MMWaveSensor::dump_config(){
     ESP_LOGCONFIG(TAG, "Empty UART sensor");
 }
 

@@ -6,13 +6,13 @@ from esphome.const import ICON_EMPTY, UNIT_EMPTY
 DEPENDENCIES = ["uart"]
 
 mmwave_sensor_ns = cg.esphome_ns.namespace("mmwave_sensor")
-EmptyUARTSensor = mmwave_sensor_ns.class_(
-    "EmptyUARTSensor", cg.PollingComponent, uart.UARTDevice
+MMWaveSensor = mmwave_sensor_ns.class_(
+    "MMWaveSensor", cg.PollingComponent, uart.UARTDevice
 )
 
 CONFIG_SCHEMA = (
     sensor.sensor_schema(
-        EmptyUARTSensor,
+        MMWaveSensor,
         unit_of_measurement=UNIT_EMPTY,
         icon=ICON_EMPTY,
         accuracy_decimals=1,
