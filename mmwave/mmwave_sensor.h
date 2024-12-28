@@ -13,6 +13,8 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
   void update() override;
   void loop() override;
   void dump_config() override;
+  void printHumanPresence(int presence);
+  void printHumanMovement(int movement);
 };
 
 }  // namespace mmwave_sensor
