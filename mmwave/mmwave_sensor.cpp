@@ -14,13 +14,10 @@ void MMWaveSensor::setup() {
 
   Serial.begin(BAUD_RATE);
 #if defined(ESP32)
-  Serial1.begin(BAUD_RATE, SERIAL_8N1, /*rx =*/21, /*tx =*/20);
+  Serial1.begin(BAUD_RATE, SERIAL_8N1, rx=21, tx=20);
 #else
   Serial1.begin(BAUD_RATE);
 #endif
-
-  // This line is no longer needed, as 'hu' is initialized in the constructor
-  // hu = DFRobot_HumanDetection(get_uart());  
 
   int retry_count = 0;
   const int max_retries = 3;
