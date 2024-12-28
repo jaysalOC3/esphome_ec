@@ -9,7 +9,7 @@ static const char *TAG = "mmwave_sensor.sensor";
 
 #define BAUD_RATE 115200
 
-DFRobot_HumanDetection hu(&Serial1);
+DFRobot_HumanDetection hu(this);
 
 void MMWaveSensor::setup() {
   Serial.begin(BAUD_RATE);
