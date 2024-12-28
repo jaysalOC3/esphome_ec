@@ -6,7 +6,7 @@
 namespace esphome {
 namespace mmwave_sensor {
 
-class mmwaveSensor : public sensor::Sensor, public PollingComponent {
+class MMWaveSensor : public sensor::Sensor, public PollingComponent {
   void setup() override;
   void loop() override;
   void update() override;

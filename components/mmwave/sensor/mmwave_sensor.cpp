@@ -6,13 +6,24 @@ namespace mmwave_sensor {
 
 static const char *TAG = "mmwave_sensor.sensor";
 
-void MMWaveSensor::setup() {}
+void MMWaveSensor::setup() {
+  ESP_LOGCONFIG(TAG, "Setting up MMWaveSensor...");
+  // Add any additional setup code here
+}
 
-void MMWaveSensor::loop() {}
+void MMWaveSensor::loop() {
+  // Add any additional loop code here
+}
 
-void MMWaveSensor::update() {}
+void MMWaveSensor::update() {
+  ESP_LOGD(TAG, "Updating MMWaveSensor...");
+  // Add any additional update code here
+}
 
-void MMWaveSensor::dump_config() { ESP_LOGCONFIG(TAG, "MMWave custom sensor"); }
+void MMWaveSensor::dump_config() {
+  ESP_LOGCONFIG(TAG, "MMWave custom sensor");
+  // Add any additional dump config code here
+}
 
 }  // namespace mmwave_sensor
 }  // namespace esphome
