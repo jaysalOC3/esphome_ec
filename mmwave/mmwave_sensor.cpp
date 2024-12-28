@@ -9,8 +9,6 @@ static const char *TAG = "mmwave_sensor.sensor";
 
 #define BAUD_RATE 115200
 
-DFRobot_HumanDetection hu(this);
-
 void MMWaveSensor::setup() {
   Serial.begin(BAUD_RATE);
   
@@ -19,6 +17,8 @@ void MMWaveSensor::setup() {
   #else
   Serial1.begin(BAUD_RATE);
   #endif
+
+  hu = DFRobot_HumanDetection(this);
 
   if (hu.begin() != 0) {
     Serial.println("Sensor initialization failed!");
