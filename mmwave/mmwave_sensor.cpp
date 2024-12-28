@@ -11,14 +11,14 @@ static const char *TAG = "mmwave_sensor.sensor";
 
 void MMWaveSensor::setup() {
   Serial.begin(BAUD_RATE);
-  
-  #if defined(ESP32)
+#if defined(ESP32)
   Serial1.begin(BAUD_RATE, SERIAL_8N1, /*rx =*/21, /*tx =*/20);
-  #else
+#else
   Serial1.begin(BAUD_RATE);
-  #endif
+#endif
 
-  hu = DFRobot_HumanDetection(this);
+  // This line is no longer needed, as 'hu' is initialized in the constructor
+  // hu = DFRobot_HumanDetection(get_uart());  
 
   if (hu.begin() != 0) {
     Serial.println("Sensor initialization failed!");

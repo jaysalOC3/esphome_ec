@@ -1,20 +1,7 @@
-# spal
-
-# example configuration:
+# spal configuration for mmWave sensor:
 
 sensor:
-  - platform: mmwave_sensor
-    name: Empty UART sensor
-
-uart:
-  tx_pin: D0
-  rx_pin: D1
-  baud_rate: 9600
-
-# Example configuration for mmWave sensor:
-
-sensor:
-  - platform: mmwave_sensor
+  - platform: mmwave
     name: mmWave Human Detection Sensor
 
 uart:

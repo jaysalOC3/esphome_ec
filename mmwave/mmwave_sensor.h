@@ -10,6 +10,9 @@ namespace mmwave_sensor {
 
 class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
  public:
+  // Add a constructor that takes a UARTComponent
+  MMWaveSensor(uart::UARTComponent *parent) : hu(parent) {} 
+
   void setup() override;
   void update() override;
   void loop() override;
