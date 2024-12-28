@@ -5,8 +5,8 @@ from esphome.const import ICON_EMPTY, UNIT_EMPTY
 
 DEPENDENCIES = ["uart"]
 
-empty_uart_sensor_ns = cg.esphome_ns.namespace("empty_uart_sensor")
-EmptyUARTSensor = empty_uart_sensor_ns.class_(
+mmwave_sensor_ns = cg.esphome_ns.namespace("mmwave_sensor")
+EmptyUARTSensor = mmwave_sensor_ns.class_(
     "EmptyUARTSensor", cg.PollingComponent, uart.UARTDevice
 )
 

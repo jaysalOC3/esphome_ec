@@ -1,10 +1,10 @@
 #include "esphome/core/log.h"
-#include "empty_uart_sensor.h"
+#include "mmwave_sensor.h"
 
 namespace esphome {
-namespace empty_uart_sensor {
+namespace mmwave_sensor {
 
-static const char *TAG = "empty_uart_sensor.sensor";
+static const char *TAG = "mmwave_sensor.sensor";
 
 void EmptyUARTSensor::setup() {
 
@@ -22,5 +22,5 @@ void EmptyUARTSensor::dump_config(){
     ESP_LOGCONFIG(TAG, "Empty UART sensor");
 }
 
-}  // namespace empty_UART_sensor
+}  // namespace mmwave_sensor
 }  // namespace esphome

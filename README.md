@@ -3,7 +3,7 @@
 # example configuration:
 
 sensor:
-  - platform: empty_uart_sensor
+  - platform: mmwave_sensor
     name: Empty UART sensor
 
 uart:

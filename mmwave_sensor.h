@@ -5,7 +5,7 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace empty_uart_sensor {
+namespace mmwave_sensor {
 
 class EmptyUARTSensor : public sensor::Sensor, public PollingComponent, public uart::UARTDevice {
  public:
@@ -15,5 +15,5 @@ class EmptyUARTSensor : public sensor::Sensor, public PollingComponent, public u
   void dump_config() override;
 };
 
-}  // namespace empty_uart_sensor
+}  // namespace mmwave_sensor
 }  // namespace esphome
