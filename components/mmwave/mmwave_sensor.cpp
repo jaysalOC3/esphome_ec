@@ -37,39 +37,41 @@ void MMWaveSensor::loop() {
 }
 
 void MMWaveSensor::update() {
-    if (this->current_request_type_ == NONE) { // Only send a new request if none is pending
-        if (this->next_request_type_ == NONE) { // Determine next request
-            this->next_request_type_ = HUMAN_PRESENCE;
-        }
-        this->request_data(this->next_request_type_);
-        this->current_request_type_ = this->next_request_type_; //Set current request
-        this->next_request_type_ = (this->next_request_type_ + 1) % 5; //Cycle through requests. 5 is the number of request types.
-        if (this->next_request_type_ == 0){
-            this->next_request_type_ = HUMAN_PRESENCE;
-        }
-
-    } else if (millis() - this->last_request_time_ > 1000) {
-        ESP_LOGW(TAG, "Request for type %d timed out.", this->current_request_type_);
-        this->current_request_type_ = NONE; // Reset to allow a new request
+  if (this->current_request_type_ == RequestType::NONE) {
+    if (this->next_request_type_ == RequestType::NONE) {
+      this->next_request_type_ = RequestType::HUMAN_PRESENCE;
     }
+
+    this->request_data(static_cast<uint8_t>(this->next_request_type_)); // Correct cast here
+    this->current_request_type_ = this->next_request_type_;
+
+    // Corrected cycling logic
+    this->next_request_type_ = static_cast<RequestType>((static_cast<uint8_t>(this->next_request_type_) % 5) + 1);
+    if (this->next_request_type_ == RequestType::NONE){
+        this->next_request_type_ = RequestType::HUMAN_PRESENCE;
+    }
+  } else if (millis() - this->last_request_time_ > 1000) {
+    ESP_LOGW(TAG, "Request for type %u timed out.", static_cast<uint8_t>(this->current_request_type_)); // Correct cast here
+    this->current_request_type_ = RequestType::NONE;
+  }
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
     uint8_t ret_data[10];
-    switch (type) {
-        case HUMAN_PRESENCE:
+    switch (static_cast<RequestType>(type)) { // Cast to RequestType in switch
+        case RequestType::HUMAN_PRESENCE:
             this->send_command(0x02, 0x05, 0, nullptr, ret_data);
             break;
-        case HUMAN_MOVEMENT:
+        case RequestType::HUMAN_MOVEMENT:
             this->send_command(0x02, 0x06, 0, nullptr, ret_data);
             break;
-        case HUMAN_RANGE:
+        case RequestType::HUMAN_RANGE:
             this->send_command(0x02, 0x07, 0, nullptr, ret_data);
             break;
-        case BREATH_RATE:
+        case RequestType::BREATH_RATE:
             this->send_command(0x02, 0x09, 0, nullptr, ret_data);
             break;
-        case HEART_RATE:
+        case RequestType::HEART_RATE:
             this->send_command(0x02, 0x08, 0, nullptr, ret_data);
             break;
         default:
@@ -78,7 +80,6 @@ void MMWaveSensor::request_data(uint8_t type) {
     }
     this->last_request_time_ = millis();
 }
-
 
 void MMWaveSensor::process_response() {
     using namespace esphome::mmwave_sensor;
@@ -99,41 +100,39 @@ void MMWaveSensor::process_response() {
 
     switch (cmd) {
         case 0x05: //Presence
-            if (this->current_request_type_ == HUMAN_PRESENCE) { // Corrected
+            if (this->current_request_type_ == RequestType::HUMAN_PRESENCE) {
                 this->presence_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->current_request_type_ = NONE; // Reset after successful response
+                this->current_request_type_ = RequestType::NONE;
             }
             break;
         case 0x06: //Movement
-            if (this->current_request_type_ == HUMAN_MOVEMENT) { // Corrected
+            if (this->current_request_type_ == RequestType::HUMAN_MOVEMENT) {
                 this->movement_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->current_request_type_ = NONE;
+                this->current_request_type_ = RequestType::NONE;
             }
             break;
         case 0x07: //Range
-            if (this->current_request_type_ == HUMAN_RANGE) { // Corrected
+            if (this->current_request_type_ == RequestType::HUMAN_RANGE) {
                 this->movement_range_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->current_request_type_ = NONE;
+                this->current_request_type_ = RequestType::NONE;
             }
             break;
         case 0x08: //Heart Rate
-            if (this->current_request_type_ == HEART_RATE) { // Corrected
+            if (this->current_request_type_ == RequestType::HEART_RATE) {
                 this->heart_sensor_->publish_state(buf[3]);
-                this->current_request_type_ = NONE;
+                this->current_request_type_ = RequestType::NONE;
             }
             break;
         case 0x09: //Breath Rate
-            if (this->current_request_type_ == BREATH_RATE) { // Corrected
+            if (this->current_request_type_ == RequestType::BREATH_RATE) {
                 this->breath_sensor_->publish_state(buf[3]);
-                this->current_request_type_ = NONE;
+                this->current_request_type_ = RequestType::NONE;
             }
             break;
         default:
             ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
             break;
-    }
-}
-
+          
 bool MMWaveSensor::begin() {
   uint8_t ret_data[10];
   return send_command(0x01, 0x01, 0, nullptr, ret_data);
