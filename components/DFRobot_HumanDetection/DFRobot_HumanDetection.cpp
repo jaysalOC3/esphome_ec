@@ -21,26 +21,20 @@ DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : esphome::Component()
 
 void DFRobot_HumanDetection::setup()
 {
-    ESP_LOGCONFIG(TAG, "Setting up DFRobot Human Detection...");
+    // Initialize Serial1 (adjust pins as needed)
+    #if defined(ESP32)
+    Serial1.begin(115200, SERIAL_8N1, /*rx =*/D3, /*tx =*/D2); 
+    #else
+    Serial1.begin(115200);
+    #endif
 
-    if (begin() != 0)
-    {
-        ESP_LOGE(TAG, "Sensor initialization failed");
-        this->mark_failed();
-        return;
+    ESP_LOGD("DFRobot_HumanDetection", "Start initialization");
+    while (hu.begin() != 0) {
+      ESP_LOGE("DFRobot_HumanDetection", "init error!!!");
+      delay(1000);
     }
+    ESP_LOGD("DFRobot_HumanDetection", "Initialization successful");
 
-    if (configWorkMode(eSleepMode) != 0)
-    {
-        ESP_LOGE(TAG, "Failed to set sleep mode");
-        this->mark_failed();
-        return;
-    }
-
-    configLEDLight(eHPLed, 1);
-    sensorRet();
-
-    ESP_LOGD(TAG, "Sensor initialized successfully");
 }
 
 void DFRobot_HumanDetection::loop()
