@@ -13,6 +13,7 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(DFRobot_HumanDetection),
+            cv.Optional("update_interval", default="5s"): cv.positive_time_period_milliseconds,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
