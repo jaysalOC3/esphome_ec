@@ -12,6 +12,8 @@
 #ifndef _DFROBOT_HUMAN_DETECTION_
 #define _DFROBOT_HUMAN_DETECTION_
 #include "Arduino.h"
+#include "esphome/core/component.h"
+#include "esphome/components/uart/uart.h"
 
 #if (defined ARDUINO_AVR_UNO) && (defined ESP8266)
 #include "SoftwareSerial.h"
@@ -81,7 +83,7 @@ typedef struct
 
 } sSleepStatistics;
 
-class DFRobot_HumanDetection
+class DFRobot_HumanDetection : public esphome::Component, public esphome::uart::UARTDevice
 {
 public:
     /**
@@ -466,6 +468,18 @@ public:
      *
      */
     uint8_t dmFallConfig(eDmFallConfig con, uint32_t data);
+
+    /**
+     * @fn setup
+     * @brief Setup method required by esphome::Component
+     */
+    void setup() override;
+
+    /**
+     * @fn loop
+     * @brief Loop method required by esphome::Component
+     */
+    void loop() override;
 
 private:
     /**

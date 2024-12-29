@@ -11,9 +11,41 @@
 
 #include "DFRobot_HumanDetection.h"
 #include "stdio.h"
+#include "esphome/core/log.h"
 
-DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : _s(s)
+static const char *const TAG = "DFRobot_HumanDetection";
+
+DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : esphome::Component(), esphome::uart::UARTDevice(s), _s(s)
 {
+}
+
+void DFRobot_HumanDetection::setup()
+{
+    ESP_LOGCONFIG(TAG, "Setting up DFRobot Human Detection...");
+
+    if (begin() != 0)
+    {
+        ESP_LOGE(TAG, "Sensor initialization failed");
+        this->mark_failed();
+        return;
+    }
+
+    if (configWorkMode(eSleepMode) != 0)
+    {
+        ESP_LOGE(TAG, "Failed to set sleep mode");
+        this->mark_failed();
+        return;
+    }
+
+    configLEDLight(eHPLed, 1);
+    sensorRet();
+
+    ESP_LOGD(TAG, "Sensor initialized successfully");
+}
+
+void DFRobot_HumanDetection::loop()
+{
+    // Add the implementation for the loop method
 }
 
 uint8_t DFRobot_HumanDetection::begin(void)
