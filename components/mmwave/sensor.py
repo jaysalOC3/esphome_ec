@@ -68,26 +68,27 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID], config[CONF_UART_ID])
+    uart_var = await cg.get_variable(config[CONF_UART_ID])  # Resolve the UART variable
+    var = cg.new_Pvariable(config[CONF_ID], uart_var)       # Pass the resolved UART variable
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
     if CONF_PRESENCE in config:
         sens = await sensor.new_sensor(config[CONF_PRESENCE])
         cg.add(var.set_presence_sensor(sens))
-        
+
     if CONF_MOVEMENT in config:
         sens = await sensor.new_sensor(config[CONF_MOVEMENT])
         cg.add(var.set_movement_sensor(sens))
-        
+
     if CONF_MOVEMENT_RANGE in config:
         sens = await sensor.new_sensor(config[CONF_MOVEMENT_RANGE])
         cg.add(var.set_movement_range_sensor(sens))
-        
+
     if CONF_BREATH_RATE in config:
         sens = await sensor.new_sensor(config[CONF_BREATH_RATE])
         cg.add(var.set_breath_sensor(sens))
-        
+
     if CONF_HEART_RATE in config:
         sens = await sensor.new_sensor(config[CONF_HEART_RATE])
         cg.add(var.set_heart_sensor(sens))
