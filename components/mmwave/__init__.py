@@ -1,1 +1,1 @@
-from .sensor import mmwave_sensor
+from .sensor import MMWaveSensor
