@@ -26,7 +26,7 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
   bool config_work_mode(uint8_t mode);
   uint8_t get_work_mode();
   bool config_led_light(uint8_t led, uint8_t state);
-  uint8_t get_led_light_state(uint8_t led); // This function was in your header but not in the cpp
+  uint8_t get_led_light_state(uint8_t led);
   bool sensor_reset();
 
   uint16_t get_human_data(uint8_t type);
@@ -50,6 +50,8 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
   static const uint8_t HUMAN_PRESENCE = 0x00;
   static const uint8_t HUMAN_MOVEMENT = 0x01;
   static const uint8_t HUMAN_RANGE = 0x02;
+    static const uint8_t BREATH_RATE = 0x03; // Correctly defined here
+    static const uint8_t HEART_RATE = 0x04; // Correctly defined here
 
  private:
     uint8_t pending_request_ = 0;
