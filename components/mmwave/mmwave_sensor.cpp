@@ -7,6 +7,40 @@ namespace mmwave_sensor {
 
 static const char *const TAG = "mmwave_sensor.sensor";
 
+class MMWaveSensor : public Component, public PollingComponent {
+public:
+    void setup() { /* ... */ }
+    void loop() { /* ... */ }
+    void update() { /* ... */ }
+    void request_data(uint8_t type) { /* ... */ }
+    void process_response() { /* ... */ }
+    bool begin() { /* ... */ }
+    bool config_work_mode(uint8_t mode) { /* ... */ }
+    uint8_t get_work_mode() { /* ... */ }
+    bool config_led_light(uint8_t led, uint8_t state) { /* ... */ }
+    uint8_t get_led_light_state(uint8_t led) { /* ... */ }
+    bool sensor_reset() { /* ... */ }
+    uint16_t get_human_data(uint8_t type) { /* ... */ }
+    uint8_t get_heart_rate() { /* ... */ }
+    uint8_t get_breathe_value() { /* ... */ }
+    bool send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) { /* ... */ }
+    uint8_t calculate_checksum(uint8_t len, uint8_t *buf) { /* ... */ }
+    void dump_config() { /* ... */ }
+
+private:
+    enum RequestType {
+        NONE = 0,
+        HUMAN_PRESENCE = 1,
+        HUMAN_MOVEMENT = 2,
+        HUMAN_RANGE = 3,
+        BREATH_RATE = 4,
+        HEART_RATE = 5
+    };
+    RequestType current_request_type_ = NONE;
+    RequestType next_request_type_ = NONE;
+    unsigned long last_request_time_ = 0;
+};
+
 void MMWaveSensor::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MMWave Sensor...");
 
@@ -29,48 +63,54 @@ void MMWaveSensor::setup() {
 }
 
 void MMWaveSensor::loop() {
-  if (this->available() >= 6) {
-    this->process_response();
-  }
+    if (this->available() >= 6) {
+        this->process_response();
+    }
 }
 
 void MMWaveSensor::update() {
-  this->request_data(HUMAN_PRESENCE);
-  this->request_data(HUMAN_MOVEMENT);
-  this->request_data(HUMAN_RANGE);
-  this->request_data(BREATH_RATE);
-  this->request_data(HEART_RATE);
+    if (this->current_request_type_ == NONE) { // Only send a new request if none is pending
+        if (this->next_request_type_ == NONE) { // Determine next request
+            this->next_request_type_ = HUMAN_PRESENCE;
+        }
+        this->request_data(this->next_request_type_);
+        this->current_request_type_ = this->next_request_type_; //Set current request
+        this->next_request_type_ = (this->next_request_type_ + 1) % 5; //Cycle through requests. 5 is the number of request types.
+        if (this->next_request_type_ == 0){
+            this->next_request_type_ = HUMAN_PRESENCE;
+        }
+
+    } else if (millis() - this->last_request_time_ > 1000) {
+        ESP_LOGW(TAG, "Request for type %d timed out.", this->current_request_type_);
+        this->current_request_type_ = NONE; // Reset to allow a new request
+    }
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
-    using namespace esphome::mmwave_sensor;
-    if(this->pending_request_ == 0){
-        uint8_t ret_data[10];
-        switch (type) {
-            case HUMAN_PRESENCE:
-                this->send_command(0x02, 0x05, 0, nullptr, ret_data);
-                break;
-            case HUMAN_MOVEMENT:
-                this->send_command(0x02, 0x06, 0, nullptr, ret_data);
-                break;
-            case HUMAN_RANGE:
-                this->send_command(0x02, 0x07, 0, nullptr, ret_data);
-                break;
-            case BREATH_RATE:
-                this->send_command(0x02, 0x09, 0, nullptr, ret_data);
-                break;
-            case HEART_RATE:
-                this->send_command(0x02, 0x08, 0, nullptr, ret_data);
-                break;
-        }
-        this->pending_request_ = type + 1;
-        this->last_request_time_ = millis();
-    } else if(millis() - this->last_request_time_ > 1000) {
-        ESP_LOGW(TAG, "Previous request timed out, requesting new data");
-        this->pending_request_ = 0;
+    uint8_t ret_data[10];
+    switch (type) {
+        case HUMAN_PRESENCE:
+            this->send_command(0x02, 0x05, 0, nullptr, ret_data);
+            break;
+        case HUMAN_MOVEMENT:
+            this->send_command(0x02, 0x06, 0, nullptr, ret_data);
+            break;
+        case HUMAN_RANGE:
+            this->send_command(0x02, 0x07, 0, nullptr, ret_data);
+            break;
+        case BREATH_RATE:
+            this->send_command(0x02, 0x09, 0, nullptr, ret_data);
+            break;
+        case HEART_RATE:
+            this->send_command(0x02, 0x08, 0, nullptr, ret_data);
+            break;
+        default:
+            ESP_LOGW(TAG, "Invalid request type: %d", type);
+            return;
     }
-
+    this->last_request_time_ = millis();
 }
+
 
 void MMWaveSensor::process_response() {
     using namespace esphome::mmwave_sensor;
@@ -81,43 +121,43 @@ void MMWaveSensor::process_response() {
     //Basic Checksum Validation
     uint8_t received_checksum = buf[bytes_read - 1];
     uint8_t calculated_checksum = calculate_checksum(bytes_read - 1, buf);
-    if(received_checksum != calculated_checksum){
+    if (received_checksum != calculated_checksum) {
         ESP_LOGW(TAG, "Checksum mismatch, discarding data");
         return;
     }
 
-  // Process data based on command
-  uint8_t cmd = buf[2];
+    // Process data based on command
+    uint8_t cmd = buf[2];
 
     switch (cmd) {
         case 0x05: //Presence
-            if(this->pending_request_ == HUMAN_PRESENCE + 1){
+            if (this->current_request_type_ == HUMAN_PRESENCE) { // Corrected
                 this->presence_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->pending_request_ = 0;
+                this->current_request_type_ = NONE; // Reset after successful response
             }
             break;
         case 0x06: //Movement
-            if(this->pending_request_ == HUMAN_MOVEMENT + 1){
+            if (this->current_request_type_ == HUMAN_MOVEMENT) { // Corrected
                 this->movement_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->pending_request_ = 0;
+                this->current_request_type_ = NONE;
             }
             break;
         case 0x07: //Range
-            if(this->pending_request_ == HUMAN_RANGE + 1){
+            if (this->current_request_type_ == HUMAN_RANGE) { // Corrected
                 this->movement_range_sensor_->publish_state((buf[3] << 8) | buf[4]);
-                this->pending_request_ = 0;
+                this->current_request_type_ = NONE;
             }
             break;
         case 0x08: //Heart Rate
-            if(this->pending_request_ == HEART_RATE + 1){
+            if (this->current_request_type_ == HEART_RATE) { // Corrected
                 this->heart_sensor_->publish_state(buf[3]);
-                this->pending_request_ = 0;
+                this->current_request_type_ = NONE;
             }
             break;
         case 0x09: //Breath Rate
-            if(this->pending_request_ == BREATH_RATE + 1){
+            if (this->current_request_type_ == BREATH_RATE) { // Corrected
                 this->breath_sensor_->publish_state(buf[3]);
-                this->pending_request_ = 0;
+                this->current_request_type_ = NONE;
             }
             break;
         default:
@@ -225,6 +265,20 @@ void MMWaveSensor::dump_config() {
   LOG_SENSOR("  ", "Breath Rate", this->breath_sensor_);
   LOG_SENSOR("  ", "Heart Rate", this->heart_sensor_);
 }
+
+private:
+    enum RequestType {
+        NONE = 0,
+        HUMAN_PRESENCE = 1,
+        HUMAN_MOVEMENT = 2,
+        HUMAN_RANGE = 3,
+        BREATH_RATE = 4,
+        HEART_RATE = 5
+    };
+    RequestType current_request_type_ = NONE;
+    RequestType next_request_type_ = NONE;
+    unsigned long last_request_time_ = 0;
+};
 
 }  // namespace mmwave_sensor
 }  // namespace esphome
