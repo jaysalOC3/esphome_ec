@@ -231,6 +231,25 @@ bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint
     return false; // Timeout occurred
 }
 
+uint8_t MMWaveSensor::calculate_checksum(uint8_t len, uint8_t *buf) {
+    uint8_t sum = 0;
+    for (uint8_t i = 0; i < len; i++) {
+        sum += buf[i];
+    }
+    return sum;
+}
+
+void MMWaveSensor::set_movement_range_sensor(sensor::Sensor *range_sensor) {
+    this->movement_range_sensor_ = range_sensor;
+}
+
+void MMWaveSensor::set_breath_sensor(sensor::Sensor *breath_sensor) {
+    this->breath_sensor_ = breath_sensor;
+}
+
+void MMWaveSensor::set_heart_sensor(sensor::Sensor *heart_sensor) {
+    this->heart_sensor_ = heart_sensor;
+}
 
 void MMWaveSensor::dump_config() {
   ESP_LOGCONFIG(TAG, "MMWave Sensor:");
