@@ -65,7 +65,7 @@ void MMWaveSensor::request_data(uint8_t type) {
         }
         this->pending_request_ = type + 1;
         this->last_request_time_ = millis();
-    } else if(millis() - this->last_request_time_ > 200) {
+    } else if(millis() - this->last_request_time_ > 1000) {
         ESP_LOGW(TAG, "Previous request timed out, requesting new data");
         this->pending_request_ = 0;
     }
