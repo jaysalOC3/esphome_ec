@@ -37,7 +37,11 @@ void MMWaveSensor::loop() {
 }
 
 void MMWaveSensor::update() {
-  // Add the implementation for the update method
+  if (this->current_request_type_ == RequestType::NONE) {
+    this->current_request_type_ = this->next_request_type_;
+    this->next_request_type_ = RequestType::NONE;
+  }
+  this->request_data(static_cast<uint8_t>(this->current_request_type_));
 }
 
 void MMWaveSensor::request_data(uint8_t type) {

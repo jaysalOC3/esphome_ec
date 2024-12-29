@@ -21,6 +21,9 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
   void set_breath_sensor(sensor::Sensor *breath_sensor);
   void set_heart_sensor(sensor::Sensor *heart_sensor);
 
+  void request_data(uint8_t type);
+  void process_response();
+
  protected:
   bool begin();
   bool config_work_mode(uint8_t mode);
@@ -35,8 +38,6 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
 
   bool send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data);
   uint8_t calculate_checksum(uint8_t len, uint8_t *buf);
-  void process_response();
-  void request_data(uint8_t type);
 
   sensor::Sensor *presence_sensor_{nullptr};
   sensor::Sensor *movement_sensor_{nullptr};
