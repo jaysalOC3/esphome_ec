@@ -66,7 +66,7 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-    var = await sensor.new_sensor(config)
+    var = cg.new_Pvariable(config[CONF_ID], config[CONF_UART_ID])
     await cg.register_component(var, config)
     
     if CONF_PRESENCE in config:
