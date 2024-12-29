@@ -56,7 +56,9 @@ async def to_code(config):
     # Get the UART bus (with error handling)
     try:
         uart_bus = await cg.get_variable(config[uart.CONF_UART_ID])
-        cg.add(var.set_uart_parent(uart_bus)) 
+        # Create the DFRobot_HumanDetection object and pass the uart_bus
+        var = cg.new_Pvariable(config[CONF_ID], uart_bus)  
+        
     except KeyError:
         raise cv.Invalid("No UART bus configured for DFRobot_HumanDetection")
 
