@@ -18,8 +18,3 @@ async def to_code(config):
         await cg.register_component(var, config)
     except Exception as e:
         raise ValueError(f"Error initializing MMWaveSensor: {e}")
-
-# Detailed comments explaining the purpose of each section of the code
-# The above code defines the MMWaveSensor class and its configuration schema.
-# The to_code function initializes the sensor and registers it as a component.
-# Error handling is added to catch any issues during initialization.
