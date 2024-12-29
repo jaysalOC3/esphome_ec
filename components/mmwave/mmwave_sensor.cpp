@@ -5,17 +5,45 @@
 namespace esphome {
 namespace mmwave_sensor {
 
-// ... (setup, loop, other functions)
+static const char *const TAG = "mmwave_sensor.sensor";
+
+void MMWaveSensor::setup() {
+  ESP_LOGCONFIG(TAG, "Setting up MMWave Sensor...");
+
+  if (!this->begin()) {
+    ESP_LOGE(TAG, "Sensor initialization failed");
+    this->mark_failed();
+    return;
+  }
+
+  if (!this->config_work_mode(SLEEP_MODE)) {
+    ESP_LOGE(TAG, "Failed to set sleep mode");
+    this->mark_failed();
+    return;
+  }
+
+  this->config_led_light(HP_LED, 1);
+  this->sensor_reset();
+
+  ESP_LOGD(TAG, "Sensor initialized successfully");
+}
+
+void MMWaveSensor::loop() {
+  if (this->available() >= 6) {
+    this->process_response();
+  }
+}
 
 void MMWaveSensor::update() {
   this->request_data(HUMAN_PRESENCE);
   this->request_data(HUMAN_MOVEMENT);
   this->request_data(HUMAN_RANGE);
-  this->request_data(BREATH_RATE); // Now correct
-  this->request_data(HEART_RATE); // Now correct
+  this->request_data(BREATH_RATE);
+  this->request_data(HEART_RATE);
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
+    using namespace esphome::mmwave_sensor;
     if(this->pending_request_ == 0){
         uint8_t ret_data[10];
         switch (type) {
@@ -35,7 +63,7 @@ void MMWaveSensor::request_data(uint8_t type) {
                 this->send_command(0x02, 0x08, 0, nullptr, ret_data);
                 break;
         }
-        this->pending_request_ = type + 1; //Offsetting to ensure it is not 0
+        this->pending_request_ = type + 1;
         this->last_request_time_ = millis();
     } else if(millis() - this->last_request_time_ > 200) {
         ESP_LOGW(TAG, "Previous request timed out, requesting new data");
@@ -45,6 +73,7 @@ void MMWaveSensor::request_data(uint8_t type) {
 }
 
 void MMWaveSensor::process_response() {
+    using namespace esphome::mmwave_sensor;
     uint8_t buf[256];
     uint8_t bytes_read = this->read_array(buf, this->available());
     if (bytes_read < 6) return;
@@ -93,11 +122,69 @@ void MMWaveSensor::process_response() {
             break;
         default:
             ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
-            break; // Important: Added break here!
-    } // Closing switch
+            break;
+    }
 }
 
-// ... (rest of the functions)
+bool MMWaveSensor::begin() {
+  uint8_t ret_data[10];
+  return send_command(0x01, 0x01, 0, nullptr, ret_data);
+}
 
-}  // namespace mmwave_sensor
-}  // namespace esphome
+bool MMWaveSensor::config_work_mode(uint8_t mode) {
+  uint8_t send_data[1] = {mode};
+  uint8_t ret_data[10];
+  return send_command(0x01, 0x02, 1, send_data, ret_data);
+}
+
+uint8_t MMWaveSensor::get_work_mode() {
+  uint8_t ret_data[10];
+  if (send_command(0x02, 0x02, 0, nullptr, ret_data)) {
+    return ret_data[0];
+  }
+  return 0;
+}
+
+bool MMWaveSensor::config_led_light(uint8_t led, uint8_t state) {
+  uint8_t send_data[2] = {led, state};
+  uint8_t ret_data[10];
+  return send_command(0x01, 0x03, 2, send_data, ret_data);
+}
+uint8_t MMWaveSensor::get_led_light_state(uint8_t led){
+    uint8_t ret_data[10];
+    if(send_command(0x02, 0x03, 0, nullptr, ret_data)){
+        return ret_data[led];
+    }
+    return 0;
+}
+
+bool MMWaveSensor::sensor_reset() {
+  uint8_t ret_data[10];
+  return send_command(0x01, 0x04, 0, nullptr, ret_data);
+}
+
+uint16_t MMWaveSensor::get_human_data(uint8_t type) {
+  uint8_t ret_data[10];
+  if (send_command(0x02, 0x05 + type, 0, nullptr, ret_data)) {
+    return (ret_data[0] << 8) | ret_data[1];
+  }
+  return 0;
+}
+
+uint8_t MMWaveSensor::get_heart_rate() {
+  uint8_t ret_data[10];
+  if (send_command(0x02, 0x08, 0, nullptr, ret_data)) {
+    return ret_data[0];
+  }
+  return 0;
+}
+
+uint8_t MMWaveSensor::get_breathe_value() {
+  uint8_t ret_data[10];
+  if (send_command(0x02, 0x09, 0, nullptr, ret_data)) {
+    return ret_data[0];
+  }
+  return 0;
+}
+
+bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8
