@@ -217,5 +217,14 @@ uint8_t MMWaveSensor::calculate_checksum(uint8_t len, uint8_t *buf) {
   return sum;
 }
 
+void MMWaveSensor::dump_config() {
+  ESP_LOGCONFIG(TAG, "MMWave Sensor:");
+  LOG_SENSOR("  ", "Presence", this->presence_sensor_);
+  LOG_SENSOR("  ", "Movement", this->movement_sensor_);
+  LOG_SENSOR("  ", "Movement Range", this->movement_range_sensor_);
+  LOG_SENSOR("  ", "Breath Rate", this->breath_sensor_);
+  LOG_SENSOR("  ", "Heart Rate", this->heart_sensor_);
+}
+
 }  // namespace mmwave_sensor
 }  // namespace esphome
