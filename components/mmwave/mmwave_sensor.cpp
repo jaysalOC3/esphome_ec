@@ -31,29 +31,13 @@ void MMWaveSensor::setup() {
 }
 
 void MMWaveSensor::loop() {
-    if (this->available() >= 6) {
-        this->process_response();
-    }
+  if (this->available() >= 6) {
+    this->process_response();
+  }
 }
 
 void MMWaveSensor::update() {
-  if (this->current_request_type_ == RequestType::NONE) {
-    if (this->next_request_type_ == RequestType::NONE) {
-      this->next_request_type_ = RequestType::HUMAN_PRESENCE;
-    }
-
-    this->request_data(static_cast<uint8_t>(this->next_request_type_)); // Correct cast here
-    this->current_request_type_ = this->next_request_type_;
-
-    // Corrected cycling logic
-    this->next_request_type_ = static_cast<RequestType>((static_cast<uint8_t>(this->next_request_type_) % 5) + 1);
-    if (this->next_request_type_ == RequestType::NONE){
-        this->next_request_type_ = RequestType::HUMAN_PRESENCE;
-    }
-  } else if (millis() - this->last_request_time_ > 1000) {
-    ESP_LOGW(TAG, "Request for type %u timed out.", static_cast<uint8_t>(this->current_request_type_)); // Correct cast here
-    this->current_request_type_ = RequestType::NONE;
-  }
+  // Add the implementation for the update method
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
@@ -132,7 +116,9 @@ void MMWaveSensor::process_response() {
         default:
             ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
             break;
-          
+    }
+}
+
 bool MMWaveSensor::begin() {
   uint8_t ret_data[10];
   return send_command(0x01, 0x01, 0, nullptr, ret_data);
@@ -232,20 +218,6 @@ void MMWaveSensor::dump_config() {
   LOG_SENSOR("  ", "Breath Rate", this->breath_sensor_);
   LOG_SENSOR("  ", "Heart Rate", this->heart_sensor_);
 }
-
-private:
-    enum RequestType {
-        NONE = 0,
-        HUMAN_PRESENCE = 1,
-        HUMAN_MOVEMENT = 2,
-        HUMAN_RANGE = 3,
-        BREATH_RATE = 4,
-        HEART_RATE = 5
-    };
-    RequestType current_request_type_ = NONE;
-    RequestType next_request_type_ = NONE;
-    unsigned long last_request_time_ = 0;
-};
 
 }  // namespace mmwave_sensor
 }  // namespace esphome
