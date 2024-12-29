@@ -7,10 +7,10 @@ from esphome.const import (
     ICON_MOTION_SENSOR,
     ICON_PULSE,
     DEVICE_CLASS_EMPTY,
-    PERCENTAGE,
     UNIT_BEATS_PER_MINUTE,
     ICON_COUNTER,
     DEVICE_CLASS_MOTION,
+    UNIT_PERCENT,
 )
 
 DEPENDENCIES = ["uart"]
@@ -46,7 +46,7 @@ CONFIG_SCHEMA = (
             accuracy_decimals=0,
         ),
         cv.Optional(CONF_MOVEMENT_RANGE): sensor.sensor_schema(
-            unit_of_measurement=PERCENTAGE,
+            unit_of_measurement=UNIT_PERCENT,
             icon=ICON_COUNTER,
             accuracy_decimals=0,
         ),
