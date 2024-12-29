@@ -15,11 +15,11 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
   void update() override;
   void dump_config() override;
 
-  void set_presence_sensor(sensor::Sensor *presence_sensor) { presence_sensor_ = presence_sensor; }
-  void set_movement_sensor(sensor::Sensor *movement_sensor) { movement_sensor_ = movement_sensor; }
-  void set_movement_range_sensor(sensor::Sensor *range_sensor) { movement_range_sensor_ = range_sensor; }
-  void set_breath_sensor(sensor::Sensor *breath_sensor) { breath_sensor_ = breath_sensor; }
-  void set_heart_sensor(sensor::Sensor *heart_sensor) { heart_sensor_ = heart_sensor; }
+  void set_presence_sensor(sensor::Sensor *presence_sensor);
+  void set_movement_sensor(sensor::Sensor *movement_sensor);
+  void set_movement_range_sensor(sensor::Sensor *range_sensor);
+  void set_breath_sensor(sensor::Sensor *breath_sensor);
+  void set_heart_sensor(sensor::Sensor *heart_sensor);
 
  protected:
   bool begin();
@@ -46,16 +46,17 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
 
   static const uint8_t SLEEP_MODE = 0x02;
   static const uint8_t HP_LED = 0x04;
-    enum RequestType {
-        NONE = 0,
-        HUMAN_PRESENCE = 1,
-        HUMAN_MOVEMENT = 2,
-        HUMAN_RANGE = 3,
-        BREATH_RATE = 4,
-        HEART_RATE = 5
-    };
 
  private:
+  enum class RequestType : uint8_t { // Use enum class and specify underlying type
+    NONE = 0,
+    HUMAN_PRESENCE = 1,
+    HUMAN_MOVEMENT = 2,
+    HUMAN_RANGE = 3,
+    BREATH_RATE = 4,
+    HEART_RATE = 5
+  };
+
   RequestType current_request_type_ = RequestType::NONE;
   RequestType next_request_type_ = RequestType::NONE;
   unsigned long last_request_time_ = 0;
