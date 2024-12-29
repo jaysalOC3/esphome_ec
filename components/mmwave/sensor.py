@@ -92,3 +92,6 @@ async def to_code(config):
     if CONF_HEART_RATE in config:
         sens = await sensor.new_sensor(config[CONF_HEART_RATE])
         cg.add(var.set_heart_sensor(sens))
+
+    cg.add(var.request_data(0))  # P1de6
+    cg.add(var.process_response())  # P7f1f
