@@ -35,8 +35,8 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
 
   bool send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data);
   uint8_t calculate_checksum(uint8_t len, uint8_t *buf);
-    void process_response();
-    void request_data(uint8_t type);
+  void process_response();
+  void request_data(uint8_t type);
 
   sensor::Sensor *presence_sensor_{nullptr};
   sensor::Sensor *movement_sensor_{nullptr};
@@ -46,16 +46,19 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
 
   static const uint8_t SLEEP_MODE = 0x02;
   static const uint8_t HP_LED = 0x04;
-
-  static const uint8_t HUMAN_PRESENCE = 0x00;
-  static const uint8_t HUMAN_MOVEMENT = 0x01;
-  static const uint8_t HUMAN_RANGE = 0x02;
-    static const uint8_t BREATH_RATE = 0x03; // Correctly defined here
-    static const uint8_t HEART_RATE = 0x04; // Correctly defined here
+    enum RequestType {
+        NONE = 0,
+        HUMAN_PRESENCE = 1,
+        HUMAN_MOVEMENT = 2,
+        HUMAN_RANGE = 3,
+        BREATH_RATE = 4,
+        HEART_RATE = 5
+    };
 
  private:
-    uint8_t pending_request_ = 0;
-    unsigned long last_request_time_ = 0;
+  RequestType current_request_type_ = RequestType::NONE;
+  RequestType next_request_type_ = RequestType::NONE;
+  unsigned long last_request_time_ = 0;
 };
 
 }  // namespace mmwave_sensor
