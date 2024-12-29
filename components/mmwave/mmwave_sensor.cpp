@@ -182,33 +182,51 @@ uint8_t MMWaveSensor::get_breathe_value() {
 }
 
 bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) {
-  uint8_t buf[256];
-  buf[0] = 0xAA;
-  buf[1] = control;
-  buf[2] = cmd;
-  buf[3] = (len >> 8) & 0xFF;
-  buf[4] = len & 0xFF;
+    uint8_t buf[256];
+    buf[0] = 0xAA;
+    buf[1] = control;
+    buf[2] = cmd;
+    buf[3] = (len >> 8) & 0xFF;
+    buf[4] = len & 0xFF;
 
-  if (len > 0 && send_data != nullptr) {
-    memcpy(&buf[5], send_data, len);
-  }
+    if (len > 0 && send_data != nullptr) {
+        memcpy(&buf[5], send_data, len);
+    }
 
-  uint8_t checksum = calculate_checksum(len + 5, buf);
-  buf[5 + len] = checksum;
+    uint8_t checksum = calculate_checksum(len + 5, buf);
+    buf[5 + len] = checksum;
 
-  this->write_array(buf, len + 6);
+    this->write_array(buf, len + 6);
 
-  // Wait for response - Non Blocking
-  return true;
+    // Wait for response with timeout
+    unsigned long start_time = millis();
+    const unsigned long timeout = 200; // 200ms timeout - Adjust if needed
+    uint8_t bytes_read = 0;
+
+    while (millis() - start_time < timeout) {
+        if (this->available() > 0) { // Check if any data is available
+            bytes_read = this->read_array(ret_data, this->available());
+
+            if (bytes_read >= 6) { // Check for minimum response size (adjust as needed)
+                ESP_LOGD(TAG, "Response Received (Bytes Read: %d)", bytes_read);
+                for (int i = 0; i < bytes_read; i++) {
+                    ESP_LOGD(TAG, "Byte %d: 0x%02X", i, ret_data[i]);
+                }
+                return true; // Received a response
+            }else{
+              ESP_LOGD(TAG, "Partial Response Received (Bytes Read: %d), waiting for more", bytes_read);
+              for (int i = 0; i < bytes_read; i++) {
+                    ESP_LOGD(TAG, "Byte %d: 0x%02X", i, ret_data[i]);
+                }
+            }
+        }
+        delay(1); // Small delay to avoid busy-waiting
+    }
+
+    ESP_LOGW(TAG, "Timeout waiting for response");
+    return false; // Timeout occurred
 }
 
-uint8_t MMWaveSensor::calculate_checksum(uint8_t len, uint8_t *buf) {
-  uint8_t sum = 0;
-  for (uint8_t i = 0; i < len; i++) {
-    sum += buf[i];
-  }
-  return sum;
-}
 
 void MMWaveSensor::dump_config() {
   ESP_LOGCONFIG(TAG, "MMWave Sensor:");
