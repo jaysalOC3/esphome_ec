@@ -3,6 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import sensor, uart
 from esphome.const import (
     CONF_ID,
+    CONF_UART_ID,
     UNIT_EMPTY,
     ICON_MOTION_SENSOR,
     ICON_PULSE,
@@ -33,6 +34,7 @@ CONFIG_SCHEMA = (
         accuracy_decimals=0,
     )
     .extend({
+        cv.Required(CONF_UART_ID): cv.use_id(uart.UARTComponent),
         cv.Optional(CONF_PRESENCE): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
             icon=ICON_MOTION_SENSOR,
@@ -68,7 +70,8 @@ CONFIG_SCHEMA = (
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID], config[CONF_UART_ID])
     await cg.register_component(var, config)
-    
+    await uart.register_uart_device(var, config)
+
     if CONF_PRESENCE in config:
         sens = await sensor.new_sensor(config[CONF_PRESENCE])
         cg.add(var.set_presence_sensor(sens))
