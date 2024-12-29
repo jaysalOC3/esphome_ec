@@ -1,45 +1,13 @@
-#include "mmwave_sensor.h"
+#include "mmwave_sensor.h" // Include the header!
 #include "esphome/core/log.h"
 #include "esphome/core/hal.h"
+#include <cstring> // Make sure to include this for memcpy
+
 
 namespace esphome {
 namespace mmwave_sensor {
 
 static const char *const TAG = "mmwave_sensor.sensor";
-
-class MMWaveSensor : public Component, public PollingComponent {
-public:
-    void setup() { /* ... */ }
-    void loop() { /* ... */ }
-    void update() { /* ... */ }
-    void request_data(uint8_t type) { /* ... */ }
-    void process_response() { /* ... */ }
-    bool begin() { /* ... */ }
-    bool config_work_mode(uint8_t mode) { /* ... */ }
-    uint8_t get_work_mode() { /* ... */ }
-    bool config_led_light(uint8_t led, uint8_t state) { /* ... */ }
-    uint8_t get_led_light_state(uint8_t led) { /* ... */ }
-    bool sensor_reset() { /* ... */ }
-    uint16_t get_human_data(uint8_t type) { /* ... */ }
-    uint8_t get_heart_rate() { /* ... */ }
-    uint8_t get_breathe_value() { /* ... */ }
-    bool send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) { /* ... */ }
-    uint8_t calculate_checksum(uint8_t len, uint8_t *buf) { /* ... */ }
-    void dump_config() { /* ... */ }
-
-private:
-    enum RequestType {
-        NONE = 0,
-        HUMAN_PRESENCE = 1,
-        HUMAN_MOVEMENT = 2,
-        HUMAN_RANGE = 3,
-        BREATH_RATE = 4,
-        HEART_RATE = 5
-    };
-    RequestType current_request_type_ = NONE;
-    RequestType next_request_type_ = NONE;
-    unsigned long last_request_time_ = 0;
-};
 
 void MMWaveSensor::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MMWave Sensor...");
@@ -228,7 +196,7 @@ uint8_t MMWaveSensor::get_breathe_value() {
   return 0;
 }
 
-bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) { // Corrected: No line break here
+bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) {
   uint8_t buf[256];
   buf[0] = 0xAA;
   buf[1] = control;
