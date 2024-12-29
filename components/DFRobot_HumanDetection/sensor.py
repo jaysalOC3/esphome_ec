@@ -2,15 +2,16 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor, uart
 from esphome.const import (
-    CONF_ID,
-    CONF_HEART_RATE,
-    CONF_MOVEMENT,
-    CONF_PRESENCE,
-    CONF_DISTANCE,
-    CONF_BREATH_STATE,
-    CONF_BREATH_VALUE,
-    # Add other supported sensor types here
+    CONF_ID
 )
+
+# Define your own constants
+CONF_PRESENCE = "presence"
+CONF_MOVEMENT = "movement"
+CONF_DISTANCE = "distance"
+CONF_HEART_RATE = "heart_rate"
+CONF_BREATH_STATE = "breath_state"
+CONF_BREATH_VALUE = "breath_value"
 
 DEPENDENCIES = ["uart"]
 
