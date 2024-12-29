@@ -5,41 +5,14 @@
 namespace esphome {
 namespace mmwave_sensor {
 
-static const char *const TAG = "mmwave_sensor.sensor";
-
-void MMWaveSensor::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up MMWave Sensor...");
-
-  if (!this->begin()) {
-    ESP_LOGE(TAG, "Sensor initialization failed");
-    this->mark_failed();
-    return;
-  }
-
-  if (!this->config_work_mode(SLEEP_MODE)) {
-    ESP_LOGE(TAG, "Failed to set sleep mode");
-    this->mark_failed();
-    return;
-  }
-
-  this->config_led_light(HP_LED, 1);
-  this->sensor_reset();
-
-  ESP_LOGD(TAG, "Sensor initialized successfully");
-}
-
-void MMWaveSensor::loop() {
-  if (this->available() >= 6) {  // Check for available data first
-    this->process_response();
-  }
-}
+// ... (setup, loop, other functions)
 
 void MMWaveSensor::update() {
   this->request_data(HUMAN_PRESENCE);
   this->request_data(HUMAN_MOVEMENT);
   this->request_data(HUMAN_RANGE);
-  this->request_data(BREATH_RATE);
-  this->request_data(HEART_RATE);
+  this->request_data(BREATH_RATE); // Now correct
+  this->request_data(HEART_RATE); // Now correct
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
@@ -55,10 +28,10 @@ void MMWaveSensor::request_data(uint8_t type) {
             case HUMAN_RANGE:
                 this->send_command(0x02, 0x07, 0, nullptr, ret_data);
                 break;
-            case 0x03: //BREATH_RATE in code vs 0x09 in other examples. Using 0x09
+            case BREATH_RATE:
                 this->send_command(0x02, 0x09, 0, nullptr, ret_data);
                 break;
-            case 0x04: //HEART_RATE in code vs 0x08 in other examples. Using 0x08
+            case HEART_RATE:
                 this->send_command(0x02, 0x08, 0, nullptr, ret_data);
                 break;
         }
@@ -119,3 +92,12 @@ void MMWaveSensor::process_response() {
             }
             break;
         default:
+            ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
+            break; // Important: Added break here!
+    } // Closing switch
+}
+
+// ... (rest of the functions)
+
+}  // namespace mmwave_sensor
+}  // namespace esphome
