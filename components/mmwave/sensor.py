@@ -5,9 +5,12 @@ from esphome.const import (
     CONF_ID,
     UNIT_EMPTY,
     ICON_MOTION_SENSOR,
-    ICON_RADAR,
-    ICON_HEART_PULSE,
+    ICON_PULSE,
     DEVICE_CLASS_EMPTY,
+    PERCENTAGE,
+    UNIT_BEATS_PER_MINUTE,
+    ICON_COUNTER,
+    DEVICE_CLASS_MOTION,
 )
 
 DEPENDENCIES = ["uart"]
@@ -26,33 +29,35 @@ CONFIG_SCHEMA = (
     sensor.sensor_schema(
         MMWaveSensor,
         unit_of_measurement=UNIT_EMPTY,
-        icon=ICON_RADAR,
+        icon=ICON_MOTION_SENSOR,
         accuracy_decimals=0,
     )
     .extend({
         cv.Optional(CONF_PRESENCE): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
             icon=ICON_MOTION_SENSOR,
+            device_class=DEVICE_CLASS_MOTION,
             accuracy_decimals=0,
         ),
         cv.Optional(CONF_MOVEMENT): sensor.sensor_schema(
             unit_of_measurement=UNIT_EMPTY,
             icon=ICON_MOTION_SENSOR,
+            device_class=DEVICE_CLASS_MOTION,
             accuracy_decimals=0,
         ),
         cv.Optional(CONF_MOVEMENT_RANGE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_EMPTY,
-            icon=ICON_RADAR,
+            unit_of_measurement=PERCENTAGE,
+            icon=ICON_COUNTER,
             accuracy_decimals=0,
         ),
         cv.Optional(CONF_BREATH_RATE): sensor.sensor_schema(
-            unit_of_measurement="BPM",
-            icon=ICON_HEART_PULSE,
+            unit_of_measurement=UNIT_BEATS_PER_MINUTE,
+            icon=ICON_PULSE,
             accuracy_decimals=0,
         ),
         cv.Optional(CONF_HEART_RATE): sensor.sensor_schema(
-            unit_of_measurement="BPM",
-            icon=ICON_HEART_PULSE,
+            unit_of_measurement=UNIT_BEATS_PER_MINUTE,
+            icon=ICON_PULSE,
             accuracy_decimals=0,
         ),
     })
