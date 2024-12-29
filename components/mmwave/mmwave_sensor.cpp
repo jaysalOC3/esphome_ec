@@ -150,7 +150,8 @@ bool MMWaveSensor::config_led_light(uint8_t led, uint8_t state) {
   uint8_t ret_data[10];
   return send_command(0x01, 0x03, 2, send_data, ret_data);
 }
-uint8_t MMWaveSensor::get_led_light_state(uint8_t led){
+
+uint8_t MMWaveSensor::get_led_light_state(uint8_t led) {
     uint8_t ret_data[10];
     if(send_command(0x02, 0x03, 0, nullptr, ret_data)){
         return ret_data[led];
@@ -187,4 +188,34 @@ uint8_t MMWaveSensor::get_breathe_value() {
   return 0;
 }
 
-bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8
+bool MMWaveSensor::send_command(uint8_t control, uint8_t cmd, uint16_t len, uint8_t *send_data, uint8_t *ret_data) { // Corrected: No line break here
+  uint8_t buf[256];
+  buf[0] = 0xAA;
+  buf[1] = control;
+  buf[2] = cmd;
+  buf[3] = (len >> 8) & 0xFF;
+  buf[4] = len & 0xFF;
+
+  if (len > 0 && send_data != nullptr) {
+    memcpy(&buf[5], send_data, len);
+  }
+
+  uint8_t checksum = calculate_checksum(len + 5, buf);
+  buf[5 + len] = checksum;
+
+  this->write_array(buf, len + 6);
+
+  // Wait for response - Non Blocking
+  return true;
+}
+
+uint8_t MMWaveSensor::calculate_checksum(uint8_t len, uint8_t *buf) {
+  uint8_t sum = 0;
+  for (uint8_t i = 0; i < len; i++) {
+    sum += buf[i];
+  }
+  return sum;
+}
+
+}  // namespace mmwave_sensor
+}  // namespace esphome
