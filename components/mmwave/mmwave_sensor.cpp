@@ -37,11 +37,15 @@ void MMWaveSensor::loop() {
 }
 
 void MMWaveSensor::update() {
+<<<<<<< HEAD
   if (this->current_request_type_ == RequestType::NONE) {
     this->current_request_type_ = this->next_request_type_;
     this->next_request_type_ = RequestType::NONE;
   }
   this->request_data(static_cast<uint8_t>(this->current_request_type_));
+=======
+  // Add the implementation for the update method
+>>>>>>> 5444e4c (Added DFRobot_HumanDetection)
 }
 
 void MMWaveSensor::request_data(uint8_t type) {
