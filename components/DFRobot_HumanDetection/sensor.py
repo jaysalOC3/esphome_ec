@@ -15,14 +15,14 @@ CONF_BREATH_VALUE = "breath_value"
 
 DEPENDENCIES = ["uart"]
 
-DFRobot_HumanDetectionComponent = cg.global_ns.class_(
-    "DFRobot_HumanDetectionComponent", cg.Component, uart.UARTDevice
+DFRobot_HumanDetection = cg.global_ns.class_(
+    "DFRobot_HumanDetection", cg.Component, uart.UARTDevice
 )
 
 CONFIG_SCHEMA = (
     cv.Schema(
         {
-            cv.GenerateID(): cv.declare_id(DFRobot_HumanDetectionComponent),
+            cv.GenerateID(): cv.declare_id(DFRobot_HumanDetection),
             cv.Optional(CONF_PRESENCE): sensor.sensor_schema(
                 unit_of_measurement=None, icon="mdi:human-presence", accuracy_decimals=0
             ),
