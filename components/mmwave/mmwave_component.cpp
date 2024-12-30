@@ -8,15 +8,60 @@ namespace esphome
 
         static const char *TAG = "mmwave";
 
-        uint8_t MMWaveComponent::begin(void)
+        uint8_t begin()
         {
-            delay(10000); // Startup initialization wait time (might be necessary)
-            uint8_t data = 0x0f;
-            std::array<uint8_t, 10> buf;
-            //if (getData(0x01, 0x83, 1, &data, buf.data()) == 0)
-            //{
-            //    return 0;
-            //}
+            // Allow time for device initialization
+            delay(1000); // Reduced from 10000 as 1s should be sufficient
+
+            // Initialize UART if not already done
+            if (!uart_->available())
+            {
+                ESP_LOGD("MMWave", "Initializing UART");
+                uart_->begin(115200); // Adjust baud rate as needed
+            }
+
+            // Example command structure
+            uint8_t command[] = {0x01, 0x83, 0x0F}; // Command bytes
+            size_t command_length = sizeof(command);
+
+            // Write command to UART
+            if (uart_->write(command, command_length) != command_length)
+            {
+                ESP_LOGE("MMWave", "Failed to write complete command");
+                return 0;
+            }
+
+            // Wait for response
+            uint32_t start_time = millis();
+            std::array<uint8_t, BUFFER_SIZE> response_buffer;
+            size_t bytes_read = 0;
+
+            while (millis() - start_time < 1000)
+            { // 1 second timeout
+                if (uart_->available())
+                {
+                    while (uart_->available() && bytes_read < BUFFER_SIZE)
+                    {
+                        response_buffer[bytes_read++] = uart_->read();
+                    }
+                    break;
+                }
+                delay(10); // Small delay to prevent tight loop
+            }
+
+            if (bytes_read == 0)
+            {
+                ESP_LOGE("MMWave", "No response received");
+                return 0;
+            }
+
+            // Process response
+            ESP_LOGD("MMWave", "Received %d bytes", bytes_read);
+            for (size_t i = 0; i < bytes_read; i++)
+            {
+                ESP_LOGV("MMWave", "Byte %d: 0x%02X", i, response_buffer[i]);
+            }
+
             return 1;
         }
 
