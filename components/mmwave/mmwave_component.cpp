@@ -111,11 +111,11 @@ uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf) {
 
 void MMWaveComponent::setup() {
     ESP_LOGD(TAG, "Setting up MMWave component...");
-    if (this->begin() == 0) {
-        ESP_LOGD(TAG, "MMWave sensor initialized successfully");
-    } else {
-        ESP_LOGE(TAG, "MMWave sensor initialization failed!");
-    }
+    //if (this->begin() == 0) {
+    //    ESP_LOGD(TAG, "MMWave sensor initialized successfully");
+    //} else {
+    //    ESP_LOGE(TAG, "MMWave sensor initialization failed!");
+    //}
 }
 
 void MMWaveComponent::loop() {
