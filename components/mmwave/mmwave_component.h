@@ -20,8 +20,8 @@ public:
     uint8_t sumData(uint8_t len, uint8_t *buf);
 
     // Add setter for UART parent
-    void set_uart_parent(uart::UARTComponent *parent) { 
-        this->set_uart_parent(parent);
+    void set_uart_parent(uart::UARTComponent *parent) {
+    uart::UARTDevice::set_uart_parent(parent);
     }
 
 private:
