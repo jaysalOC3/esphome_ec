@@ -7,7 +7,8 @@ esp32:
 
 # Enable logging
 logger:
-  level: VERY_VERBOSE 
+  level: VERY_VERBOSE
+  baud_rate: 115200
 
 debug:
   update_interval: 5s 

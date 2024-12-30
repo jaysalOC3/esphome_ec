@@ -23,7 +23,7 @@ namespace esphome
 
         uint8_t MMWaveComponent::begin()
         {
-            
+
             // Example command structure
             uint8_t command[] = {0x01, 0x83, 0x0F};
             size_t command_length = sizeof(command);
@@ -41,11 +41,16 @@ namespace esphome
             { // 1 second timeout
                 if (this->available())
                 {
+                    ESP_LOGD(TAG, "Data available!");
                     while (this->available() && bytes_read < this->BUFFER_SIZE)
                     {
                         response_buffer[bytes_read++] = this->read();
                     }
                     break;
+                }
+                else
+                {
+                    ESP_LOGV(TAG, "Waiting for data...");
                 }
                 delay(10);
             }
@@ -182,7 +187,7 @@ namespace esphome
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component...");
-            //if (this->begin() == 0)
+            // if (this->begin() == 0)
             if (true)
             {
                 ESP_LOGD(TAG, "MMWave sensor initialized successfully");
@@ -195,35 +200,36 @@ namespace esphome
 
         void MMWaveComponent::loop()
         {
-            static uint32_t last_log = 0;
-            if (millis() - last_log > 5000)
-            {
-                ESP_LOGD(TAG, "MMWave component loop running");
-                last_log = millis();
-            }
+            ESP_LOGD(TAG, "MMWave component loop running");
+            // static uint32_t last_log = 0;
+            // if (millis() - last_log > 5000)
+            // {
+            //     ESP_LOGD(TAG, "MMWave component loop running");
+            //     last_log = millis();
+            // }
 
-            const size_t MAX_BYTES_TO_READ = 32;
-            uint8_t data[MAX_BYTES_TO_READ];
-            size_t bytes_read = 0;
+            // const size_t MAX_BYTES_TO_READ = 32;
+            // uint8_t data[MAX_BYTES_TO_READ];
+            // size_t bytes_read = 0;
 
-            while (this->available() && bytes_read < MAX_BYTES_TO_READ)
-            {
-                data[bytes_read++] = this->read();
-            }
+            // while (this->available() && bytes_read < MAX_BYTES_TO_READ)
+            // {
+            //     data[bytes_read++] = this->read();
+            // }
 
-            if (bytes_read > 0)
-            {
-                ESP_LOGV(TAG, "Received %u bytes", bytes_read);
-                for (size_t i = 0; i < bytes_read; ++i)
-                {
-                    ESP_LOGV(TAG, "  Byte %d: 0x%02X", i, data[i]);
-                }
+            // if (bytes_read > 0)
+            // {
+            //     ESP_LOGV(TAG, "Received %u bytes", bytes_read);
+            //     for (size_t i = 0; i < bytes_read; ++i)
+            //     {
+            //         ESP_LOGV(TAG, "  Byte %d: 0x%02X", i, data[i]);
+            //     }
 
-                uint8_t retData[this->BUFFER_SIZE];
-                this->getData(0x01, 0x01, bytes_read, data, retData);
-            }
+            //     uint8_t retData[this->BUFFER_SIZE];
+            //     this->getData(0x01, 0x01, bytes_read, data, retData);
+            // }
 
-            yield();
+            //yield();
         }
 
         void MMWaveComponent::dump_config()
