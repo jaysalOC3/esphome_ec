@@ -4,7 +4,7 @@
 namespace esphome {
 namespace dfrobot_sensor_component {
 
-static const char *TAG = "dfrobot_sensor_component.component";
+static const char *TAG = "mmwave_component.component";
 
 void MMWaveComponent::setup() {
 
