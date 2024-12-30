@@ -125,13 +125,13 @@ void MMWaveComponent::loop() {
         last_log = millis();
     }
 
-    if (this->available()) {
-        ESP_LOGV(TAG, "Data available on UART");
-        while (this->available()) {
-            uint8_t c = this->read();
-            ESP_LOGV(TAG, "Received byte: 0x%02X", c);
-        }
-    }
+    //if (this->available()) {
+    //    ESP_LOGV(TAG, "Data available on UART");
+    //    while (this->available()) {
+    //        uint8_t c = this->read();
+    //        ESP_LOGV(TAG, "Received byte: 0x%02X", c);
+    //    }
+    //}
 }
 
 void MMWaveComponent::dump_config() {
