@@ -8,6 +8,7 @@ namespace mmwave_ns {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
   public:
+    uint8_t begin(void);
     void setup() override;
     void loop() override;
     void dump_config() override;
