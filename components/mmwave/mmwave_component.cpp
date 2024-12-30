@@ -8,7 +8,7 @@ namespace esphome
 
         static const char *TAG = "mmwave";
 
-        uint8_t begin()
+        uint8_t MMWaveComponent::begin()
         {
             // Allow time for device initialization
             delay(1000); // Reduced from 10000 as 1s should be sufficient
