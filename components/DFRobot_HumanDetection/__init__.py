@@ -1,1 +1,1 @@
-from .sensor import DFRobot_HumanDetection
+from .DFRobot_HumanDetection import DFRobot_HumanDetection

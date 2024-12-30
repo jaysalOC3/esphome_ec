@@ -11,9 +11,35 @@
 
 #include "DFRobot_HumanDetection.h"
 #include "stdio.h"
+#include "esphome/core/log.h"
 
-DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : _s(s)
+static const char *const TAG = "DFRobot_HumanDetection";
+
+DFRobot_HumanDetection::DFRobot_HumanDetection(Stream *s) : esphome::Component(), esphome::uart::UARTDevice(s), _s(s)
 {
+}
+
+void DFRobot_HumanDetection::setup()
+{
+    // Initialize Serial1 (adjust pins as needed)
+    #if defined(ESP32)
+    Serial1.begin(115200, SERIAL_8N1, /*rx =*/D3, /*tx =*/D2); 
+    #else
+    Serial1.begin(115200);
+    #endif
+
+    ESP_LOGD("DFRobot_HumanDetection", "Start initialization");
+    while (hu.begin() != 0) {
+      ESP_LOGE("DFRobot_HumanDetection", "init error!!!");
+      delay(1000);
+    }
+    ESP_LOGD("DFRobot_HumanDetection", "Initialization successful");
+
+}
+
+void DFRobot_HumanDetection::loop()
+{
+    // Add the implementation for the loop method
 }
 
 uint8_t DFRobot_HumanDetection::begin(void)

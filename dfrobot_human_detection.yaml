@@ -2,3 +2,4 @@ sensor:
   - platform: "DFRobot_HumanDetection"
     id: human_detection_sensor
     uart_id: uart_bus
+    update_interval: 5s
