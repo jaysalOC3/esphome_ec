@@ -95,14 +95,14 @@ namespace esphome
             ESP_LOGD(TAG, "Setting up MMWave component...");
 
             // Basic UART setup verification
-            if (this->begin() == 0)
-            {
-                ESP_LOGD(TAG, "MMWave sensor initialized successfully");
-            }
-            else
-            {
-                ESP_LOGE(TAG, "MMWave sensor initialization failed!");
-            }
+            // if (this->begin() == 0)
+            // {
+            //     ESP_LOGD(TAG, "MMWave sensor initialized successfully");
+            // }
+            // else
+            // {
+            //     ESP_LOGE(TAG, "MMWave sensor initialization failed!");
+            // }
         }
 
         void MMWaveComponent::loop()
