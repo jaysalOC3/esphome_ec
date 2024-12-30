@@ -11,55 +11,48 @@ namespace esphome
         uint8_t MMWaveComponent::begin()
         {
             // Allow time for device initialization
-            delay(1000); // Reduced from 10000 as 1s should be sufficient
-
-            // Initialize UART if not already done
-            if (!uart_->available())
-            {
-                ESP_LOGD("MMWave", "Initializing UART");
-                uart_->begin(115200); // Adjust baud rate as needed
-            }
+            delay(1000);
 
             // Example command structure
-            uint8_t command[] = {0x01, 0x83, 0x0F}; // Command bytes
+            uint8_t command[] = {0x01, 0x83, 0x0F};
             size_t command_length = sizeof(command);
 
-            // Write command to UART
-            if (uart_->write(command, command_length) != command_length)
+            // Write command to UART using UARTDevice methods
+            if (this->write_array(command, command_length) != command_length)
             {
-                ESP_LOGE("MMWave", "Failed to write complete command");
+                ESP_LOGE(TAG, "Failed to write complete command");
                 return 0;
             }
 
             // Wait for response
             uint32_t start_time = millis();
-            std::array<uint8_t, BUFFER_SIZE> response_buffer;
+            std::array<uint8_t, BUFFER_SIZE> response_buffer{};
             size_t bytes_read = 0;
 
             while (millis() - start_time < 1000)
             { // 1 second timeout
-                if (uart_->available())
+                if (this->available())
                 {
-                    while (uart_->available() && bytes_read < BUFFER_SIZE)
+                    while (this->available() && bytes_read < BUFFER_SIZE)
                     {
-                        response_buffer[bytes_read++] = uart_->read();
+                        response_buffer[bytes_read++] = this->read();
                     }
                     break;
                 }
-                delay(10); // Small delay to prevent tight loop
+                delay(10);
             }
 
             if (bytes_read == 0)
             {
-                ESP_LOGE("MMWave", "No response received");
+                ESP_LOGE(TAG, "No response received");
                 return 0;
             }
 
             // Process response
-            ESP_LOGD("MMWave", "Received %d bytes", bytes_read);
+            ESP_LOGD(TAG, "Received %d bytes", bytes_read);
             for (size_t i = 0; i < bytes_read; i++)
             {
-                ESP_LOGV("MMWave", "Byte %d: 0x%02X", i, response_buffer[i]);
+                ESP_LOGV(TAG, "Byte %d: 0x%02X", i, response_buffer[i]);
             }
 
             return 1;
@@ -74,7 +67,7 @@ namespace esphome
             uint16_t _len = 0;
             uint8_t count = 0;
 
-            std::array<uint8_t, 20> cmdBuf;
+            std::array<uint8_t, 20> cmdBuf{};
             cmdBuf[0] = 0x53;
             cmdBuf[1] = 0x59;
             cmdBuf[2] = con;
@@ -120,41 +113,40 @@ namespace esphome
                     }
                     break;
                 case CMD_HEAD:
-                    // ... (rest of the state machine logic - same as in your code) ...
+                    // Add your state machine logic here
                     break;
                 }
                 delay(50);
             }
-            delay(50);
             return 0;
         }
 
         uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf)
         {
             ESP_LOGD(TAG, "Summing data");
+            // Implement your checksum logic here
             return 0;
         }
 
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component...");
-
-            // Basic UART setup verification
-            // if (this->begin() == 0)
-            // {
-            //     ESP_LOGD(TAG, "MMWave sensor initialized successfully");
-            // }
-            // else
-            // {
-            //     ESP_LOGE(TAG, "MMWave sensor initialization failed!");
-            // }
+            // Call begin() in setup if you want to initialize the device
+            if (this->begin() == 0)
+            {
+                ESP_LOGD(TAG, "MMWave sensor initialized successfully");
+            }
+            else
+            {
+                ESP_LOGE(TAG, "MMWave sensor initialization failed!");
+            }
         }
 
         void MMWaveComponent::loop()
         {
             static uint32_t last_log = 0;
             if (millis() - last_log > 5000)
-            { // Log every 5 seconds
+            {
                 ESP_LOGD(TAG, "MMWave component loop running");
                 last_log = millis();
             }
@@ -162,7 +154,6 @@ namespace esphome
             if (this->available())
             {
                 ESP_LOGV(TAG, "Data available on UART");
-                // Just read and log available data for now
                 while (this->available())
                 {
                     uint8_t c = this->read();

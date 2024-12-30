@@ -9,7 +9,7 @@ namespace mmwave_ns {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
 public:
-    MMWaveComponent(uart::UARTDevice *parent) : uart::UARTDevice(parent) {}
+    MMWaveComponent(uart::UARTComponent *parent) : uart::UARTDevice(parent) {}
     
     void setup() override;
     void loop() override;
