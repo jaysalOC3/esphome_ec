@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["uart"]
 
-mmwave_component_ns = cg.esphome_ns.namespace("mmwave_component")
+mmwave_component_ns = cg.esphome_ns.namespace("mmwave_ns")
 MMWaveComponent = mmwave_component_ns.class_(
     "MMWaveComponent", cg.Component, uart.UARTDevice
 )

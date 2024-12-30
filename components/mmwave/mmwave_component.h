@@ -4,7 +4,7 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace mmwave_component {
+namespace mmwave_ns {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
   public:

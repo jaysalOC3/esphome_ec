@@ -2,9 +2,9 @@
 #include "mmwave_component.h"
 
 namespace esphome {
-namespace mmwave_component {
+namespace mmwave_ns {
 
-static const char *TAG = "mmwave_component.component";
+static const char *TAG = "mmwave";
 
 void MMWaveComponent::setup() {
 ESP_LOGD(TAG, "Setting up MMWave component...");
