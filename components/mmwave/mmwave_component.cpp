@@ -2,7 +2,7 @@
 #include "mmwave_component.h"
 
 namespace esphome {
-namespace mmwave_component {
+namespace dfrobot_mmwave_component {
 
 static const char *TAG = "mmwave_component.component";
 

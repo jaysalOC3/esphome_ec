@@ -4,7 +4,7 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace mmwave_component {
+namespace dfrobot_mmwave_component {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
   public:
