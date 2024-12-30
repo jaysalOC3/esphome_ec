@@ -76,6 +76,7 @@ namespace esphome
                     break;
                 case CMD_HEAD:
                     // ... (rest of the state machine logic - same as in your code) ...
+                    break;
                 }
                 delay(50);
             }
