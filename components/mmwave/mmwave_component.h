@@ -4,7 +4,6 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace dfrobot_mmwave_component {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
   public:
@@ -13,6 +12,4 @@ class MMWaveComponent : public uart::UARTDevice, public Component {
     void dump_config() override;
 };
 
-
-}  // namespace mmwave_component
 }  // namespace esphome
