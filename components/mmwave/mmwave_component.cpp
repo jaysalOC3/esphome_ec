@@ -83,6 +83,12 @@ namespace esphome
             return 0;
         }
 
+        uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf)
+        {
+            ESP_LOGD(TAG, "Summing data");
+            return 0;
+        }
+
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component...");

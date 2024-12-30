@@ -17,6 +17,7 @@ namespace esphome
       void loop() override;
       void dump_config() override;
     };
+    private : uint8_t sumData(uint8_t len, uint8_t *data);
 
   } // namespace mmwave_component
 } // namespace esphome
