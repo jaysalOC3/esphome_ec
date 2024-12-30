@@ -64,16 +64,6 @@ namespace esphome
             uint16_t _len = 0;
             uint8_t count = 0;
 
-<<<<<<< HEAD
-void MMWaveComponent::setup() {
-    ESP_LOGD(TAG, "Setting up MMWave component...");
-    //if (this->begin() == 0) {
-    //    ESP_LOGD(TAG, "MMWave sensor initialized successfully");
-    //} else {
-    //    ESP_LOGE(TAG, "MMWave sensor initialization failed!");
-    //}
-}
-=======
             std::array<uint8_t, 20> cmdBuf{};
             cmdBuf[0] = 0x53;
             cmdBuf[1] = 0x59;
@@ -85,7 +75,6 @@ void MMWaveComponent::setup() {
             cmdBuf[6 + len] = sumData(6 + len, cmdBuf.data());
             cmdBuf[7 + len] = 0x54;
             cmdBuf[8 + len] = 0x43;
->>>>>>> 61557a6 (Refactor MMWaveComponent: enhance begin method, improve response handling, and add UART data processing)
 
             while (true)
             {
@@ -100,16 +89,6 @@ void MMWaveComponent::setup() {
                     timeStart1 = millis();
                 }
 
-<<<<<<< HEAD
-    //if (this->available()) {
-    //    ESP_LOGV(TAG, "Data available on UART");
-    //    while (this->available()) {
-    //        uint8_t c = this->read();
-    //        ESP_LOGV(TAG, "Received byte: 0x%02X", c);
-    //    }
-    //}
-}
-=======
                 if (this->available() > 0)
                 {
                     data = this->read();
@@ -139,7 +118,6 @@ void MMWaveComponent::setup() {
             }
             return 0;
         }
->>>>>>> 61557a6 (Refactor MMWaveComponent: enhance begin method, improve response handling, and add UART data processing)
 
         uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf)
         {
@@ -148,10 +126,6 @@ void MMWaveComponent::setup() {
             return 0;
         }
 
-<<<<<<< HEAD
-} // namespace mmwave_ns
-} // namespace esphome
-=======
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component...");
@@ -207,4 +181,3 @@ void MMWaveComponent::setup() {
 
     } // namespace mmwave_ns
 } // namespace esphome
->>>>>>> 61557a6 (Refactor MMWaveComponent: enhance begin method, improve response handling, and add UART data processing)
