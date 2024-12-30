@@ -21,7 +21,7 @@ public:
 
     // Add setter for UART parent
     void set_uart_parent(uart::UARTComponent *parent) { 
-        this->set_uart_parent_(parent);
+        this->set_uart_parent(parent);
     }
 
 private:
