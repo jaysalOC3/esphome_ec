@@ -4,7 +4,7 @@
 #include "esphome/components/uart/uart.h"
 
 namespace esphome {
-namespace dfrobot_sensor_component {
+namespace mmwave_component {
 
 class MMWaveComponent : public uart::UARTDevice, public Component {
   public:
@@ -14,5 +14,5 @@ class MMWaveComponent : public uart::UARTDevice, public Component {
 };
 
 
-}  // namespace dfrobot_sensor_component
+}  // namespace mmwave_component
 }  // namespace esphome

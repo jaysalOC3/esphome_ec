@@ -1,8 +1,8 @@
 #include "esphome/core/log.h"
-#include "dfrobot_sensor_component.h"
+#include "mmwave_component.h"
 
 namespace esphome {
-namespace dfrobot_sensor_component {
+namespace mmwave_component {
 
 static const char *TAG = "mmwave_component.component";
 
@@ -18,5 +18,5 @@ void MMWaveComponent::dump_config(){
     ESP_LOGCONFIG(TAG, "MMWave component");
 }
 
-}  // namespace dfrobot_sensor_component
+}  // namespace mmwave_component
 }  // namespace esphome

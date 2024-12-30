@@ -5,8 +5,8 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["uart"]
 
-dfrobot_sensor_component_ns = cg.esphome_ns.namespace("dfrobot_sensor_component")
-MMWaveComponent = dfrobot_sensor_component_ns.class_(
+mmwave_component_ns = cg.esphome_ns.namespace("mmwave_component")
+MMWaveComponent = mmwave_component_ns.class_(
     "MMWaveComponent", cg.Component, uart.UARTDevice
 )
 
