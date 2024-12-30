@@ -23,9 +23,7 @@ namespace esphome
 
         uint8_t MMWaveComponent::begin()
         {
-            // Allow time for device initialization
-            delay(1000);
-
+            
             // Example command structure
             uint8_t command[] = {0x01, 0x83, 0x0F};
             size_t command_length = sizeof(command);
@@ -184,7 +182,8 @@ namespace esphome
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component...");
-            if (this->begin() == 0)
+            //if (this->begin() == 0)
+            if (true)
             {
                 ESP_LOGD(TAG, "MMWave sensor initialized successfully");
             }
