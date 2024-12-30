@@ -4,20 +4,18 @@
 logger:
   level: DEBUG # Helpful for debugging
 
-uart:
-  id: mmwave_uart
-  tx_pin: 21
-  rx_pin: 20
-  baud_rate: 115200
-
 external_components:
-  - source: ./components/mmwave  # Path to your mmwave component
+  - source: github://jaysalOC3/esphome_ec@setup-begin
+    components:
+      - mmwave
+    refresh: 5s
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO21
+  rx_pin: GPIO20
+  baud_rate: 115200  
 
 mmwave:
-  id: my_mmwave_component
-  uart_id: mmwave_uart
-  work_mode: sleep # or falling
-
-sensor:
-  - platform: mmwave
-    name: "mmwave sensor"
+  id: mmwave_component
+  uart_id: uart_bus
