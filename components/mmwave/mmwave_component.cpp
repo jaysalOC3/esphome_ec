@@ -8,6 +8,20 @@ namespace esphome
 
         static const char *TAG = "mmwave";
 
+        enum ReceiveState
+        {
+            RECEIVE_STATE_WAITING_HEADER,
+            RECEIVE_STATE_HEADER,
+            RECEIVE_STATE_CON,
+            RECEIVE_STATE_CMD,
+            RECEIVE_STATE_LEN_MSB,
+            RECEIVE_STATE_LEN_LSB,
+            RECEIVE_STATE_DATA,
+            RECEIVE_STATE_CHECKSUM,
+            RECEIVE_STATE_TRAILER1,
+            RECEIVE_STATE_TRAILER2,
+        };
+
         uint8_t MMWaveComponent::begin()
         {
             // Allow time for device initialization
@@ -23,14 +37,14 @@ namespace esphome
 
             // Wait for response
             uint32_t start_time = millis();
-            std::array<uint8_t, BUFFER_SIZE> response_buffer{};
+            std::array<uint8_t, this->BUFFER_SIZE> response_buffer{};
             size_t bytes_read = 0;
 
             while (millis() - start_time < 1000)
             { // 1 second timeout
                 if (this->available())
                 {
-                    while (this->available() && bytes_read < BUFFER_SIZE)
+                    while (this->available() && bytes_read < this->BUFFER_SIZE)
                     {
                         response_buffer[bytes_read++] = this->read();
                     }
@@ -94,7 +108,7 @@ namespace esphome
                     data = this->read();
                 }
 
-                if ((millis() - timeStart) > TIME_OUT)
+                if ((millis() - timeStart) > this->TIME_OUT)
                 {
                     ESP_LOGD(TAG, "Time out");
                     return 2;
@@ -119,11 +133,59 @@ namespace esphome
             return 0;
         }
 
-        uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf)
+        void MMWaveComponent::processReceivedData(const uint8_t *data, size_t length)
+        {
+            ESP_LOGD(TAG, "processReceivedData() - Received %u bytes", length);
+            for (size_t i = 0; i < length; i++)
+            {
+                ESP_LOGV(TAG, "  Byte %d: 0x%02X", i, data[i]);
+            }
+
+            // 1. Verify checksum (implement your checksum logic)
+            if (!this->verifyChecksum(data, length))
+            {
+                ESP_LOGE(TAG, "processReceivedData() - Checksum error!");
+                return;
+            }
+
+            // 2. Extract relevant data fields (con, cmd, len, data)
+            uint8_t con = data[2];
+            uint8_t cmd = data[3];
+            uint16_t len = (data[4] << 8) | data[5];
+
+            // 3. Handle the data based on con and cmd
+            //    (This is where you would implement your sensor-specific logic)
+            ESP_LOGD(TAG, "processReceivedData() - con: 0x%02X, cmd: 0x%02X, len: %u", con, cmd, len);
+            // ... your data handling logic ...
+        }
+
+        bool MMWaveComponent::verifyChecksum(const uint8_t *data, size_t length)
+        {
+            // Implement your checksum verification logic here
+            uint8_t calculatedChecksum = sumData(length - 2, data); // Exclude last 2 bytes (0x54 0x43)
+            uint8_t receivedChecksum = data[length - 2];
+
+            if (calculatedChecksum == receivedChecksum)
+            {
+                return true;
+            }
+            else
+            {
+                ESP_LOGE(TAG, "verifyChecksum() - Checksum mismatch! Calculated: 0x%02X, Received: 0x%02X",
+                         calculatedChecksum, receivedChecksum);
+                return false;
+            }
+        }
+
+        uint8_t MMWaveComponent::sumData(uint8_t len, const uint8_t *buf)
         {
             ESP_LOGD(TAG, "Summing data");
-            // Implement your checksum logic here
-            return 0;
+            uint16_t sum = 0;
+            for (uint8_t i = 0; i < len; i++)
+            {
+                sum += buf[i];
+            }
+            return sum & 0xFF; // Return the least significant byte
         }
 
         void MMWaveComponent::setup()
@@ -163,7 +225,7 @@ namespace esphome
                 }
 
                 // Example: Call getData() to handle the received data
-                uint8_t retData[BUFFER_SIZE];                         // Make sure BUFFER_SIZE is appropriate
+                uint8_t retData[this->BUFFER_SIZE];                         // Make sure BUFFER_SIZE is appropriate
                 this->getData(0x01, 0x01, bytes_read, data, retData); // Adjust parameters
 
                 // Further processing or publishing of data to Home Assistant
