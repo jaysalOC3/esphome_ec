@@ -6,16 +6,16 @@ namespace dfrobot_sensor_component {
 
 static const char *TAG = "dfrobot_sensor_component.component";
 
-void EmptyUARTComponent::setup() {
+void MMWaveComponent::setup() {
 
 }
 
-void EmptyUARTComponent::loop() {
+void MMWaveComponent::loop() {
 
 }
 
-void EmptyUARTComponent::dump_config(){
-    ESP_LOGCONFIG(TAG, "Empty UART component");
+void MMWaveComponent::dump_config(){
+    ESP_LOGCONFIG(TAG, "MMWave component");
 }
 
 }  // namespace dfrobot_sensor_component

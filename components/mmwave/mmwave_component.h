@@ -6,7 +6,7 @@
 namespace esphome {
 namespace dfrobot_sensor_component {
 
-class EmptyUARTComponent : public uart::UARTDevice, public Component {
+class MMWaveComponent : public uart::UARTDevice, public Component {
   public:
     void setup() override;
     void loop() override;

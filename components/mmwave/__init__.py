@@ -6,12 +6,12 @@ from esphome.const import CONF_ID
 DEPENDENCIES = ["uart"]
 
 dfrobot_sensor_component_ns = cg.esphome_ns.namespace("dfrobot_sensor_component")
-EmptyUARTComponent = dfrobot_sensor_component_ns.class_(
-    "EmptyUARTComponent", cg.Component, uart.UARTDevice
+MMWaveComponent = dfrobot_sensor_component_ns.class_(
+    "MMWaveComponent", cg.Component, uart.UARTDevice
 )
 
 CONFIG_SCHEMA = (
-    cv.Schema({cv.GenerateID(): cv.declare_id(EmptyUARTComponent)})
+    cv.Schema({cv.GenerateID(): cv.declare_id(MMWaveComponent)})
     .extend(cv.COMPONENT_SCHEMA)
     .extend(uart.UART_DEVICE_SCHEMA)
 )
