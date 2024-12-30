@@ -7,7 +7,6 @@ namespace esphome
     {
 
         static const char *TAG = "mmwave";
-
         enum ReceiveState
         {
             RECEIVE_STATE_WAITING_HEADER,
@@ -132,7 +131,6 @@ namespace esphome
             }
             return 0;
         }
-
         void MMWaveComponent::processReceivedData(const uint8_t *data, size_t length)
         {
             ESP_LOGD(TAG, "processReceivedData() - Received %u bytes", length);
@@ -141,28 +139,23 @@ namespace esphome
                 ESP_LOGV(TAG, "  Byte %d: 0x%02X", i, data[i]);
             }
 
-            // 1. Verify checksum (implement your checksum logic)
             if (!this->verifyChecksum(data, length))
             {
                 ESP_LOGE(TAG, "processReceivedData() - Checksum error!");
                 return;
             }
 
-            // 2. Extract relevant data fields (con, cmd, len, data)
             uint8_t con = data[2];
             uint8_t cmd = data[3];
             uint16_t len = (data[4] << 8) | data[5];
 
-            // 3. Handle the data based on con and cmd
-            //    (This is where you would implement your sensor-specific logic)
             ESP_LOGD(TAG, "processReceivedData() - con: 0x%02X, cmd: 0x%02X, len: %u", con, cmd, len);
             // ... your data handling logic ...
         }
 
         bool MMWaveComponent::verifyChecksum(const uint8_t *data, size_t length)
         {
-            // Implement your checksum verification logic here
-            uint8_t calculatedChecksum = sumData(length - 2, data); // Exclude last 2 bytes (0x54 0x43)
+            uint8_t calculatedChecksum = sumData(length - 2, data);
             uint8_t receivedChecksum = data[length - 2];
 
             if (calculatedChecksum == receivedChecksum)
@@ -185,7 +178,7 @@ namespace esphome
             {
                 sum += buf[i];
             }
-            return sum & 0xFF; // Return the least significant byte
+            return sum & 0xFF;
         }
 
         void MMWaveComponent::setup()
@@ -210,28 +203,27 @@ namespace esphome
                 last_log = millis();
             }
 
-            // Read data in chunks to avoid blocking
-            const size_t MAX_BYTES_TO_READ = 32; // Adjust this as needed
+            const size_t MAX_BYTES_TO_READ = 32;
             uint8_t data[MAX_BYTES_TO_READ];
-            size_t bytes_read = this->read_array(data, MAX_BYTES_TO_READ);
+            size_t bytes_read = 0;
+
+            while (this->available() && bytes_read < MAX_BYTES_TO_READ)
+            {
+                data[bytes_read++] = this->read();
+            }
 
             if (bytes_read > 0)
             {
                 ESP_LOGV(TAG, "Received %u bytes", bytes_read);
-                // Process the received data here
                 for (size_t i = 0; i < bytes_read; ++i)
                 {
                     ESP_LOGV(TAG, "  Byte %d: 0x%02X", i, data[i]);
                 }
 
-                // Example: Call getData() to handle the received data
-                uint8_t retData[this->BUFFER_SIZE];                         // Make sure BUFFER_SIZE is appropriate
-                this->getData(0x01, 0x01, bytes_read, data, retData); // Adjust parameters
-
-                // Further processing or publishing of data to Home Assistant
+                uint8_t retData[this->BUFFER_SIZE];
+                this->getData(0x01, 0x01, bytes_read, data, retData);
             }
 
-            // Yield to allow other tasks to run
             yield();
         }
 
