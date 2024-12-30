@@ -13,10 +13,10 @@ namespace esphome
             delay(10000); // Startup initialization wait time (might be necessary)
             uint8_t data = 0x0f;
             std::array<uint8_t, 10> buf;
-            if (getData(0x01, 0x83, 1, &data, buf.data()) == 0)
-            {
-                return 0;
-            }
+            //if (getData(0x01, 0x83, 1, &data, buf.data()) == 0)
+            //{
+            //    return 0;
+            //}
             return 1;
         }
 
