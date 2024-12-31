@@ -45,6 +45,8 @@ namespace esphome
                             data_.push_back(c);
                             state_ = ParseState::STATE_CONFIG;
                             ESP_LOGD(TAG, "Header found");
+                        }else{
+                            state_ = ParseState::STATE_HEADER_START;
                         }
                         break;
                     case ParseState::STATE_CONFIG:
