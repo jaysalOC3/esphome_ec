@@ -65,33 +65,34 @@ namespace esphome
                     case STATE_CHECKSUM:
                         checksum = c;
 
-                        // --- Debugging ---
-                        ESP_LOGW(TAG, "Data bytes:");
+                        ESP_LOGD(TAG, "Data bytes:");
                         for (int i = 0; i < dataIndex; i++)
                         {
-                            ESP_LOGW(TAG, "  data[%d]: 0x%02X", i, data[i]);
-                        }
-                        // --- End Debugging ---
-
-                        // Example checksum calculation (replace with your actual logic)
-                        uint8_t calculatedChecksum = 0;
-                        for (int i = 0; i < dataIndex; i++)
-                        {
-                            calculatedChecksum += data[i];
+                            ESP_LOGD(TAG, "  data[%d]: 0x%02X", i, data[i]);
                         }
 
-                        ESP_LOGW(TAG, "Received checksum: 0x%02X", checksum);
-                        ESP_LOGW(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
+                        // Create a temporary buffer for checksum calculation
+                        uint8_t checksumBuffer[14];    // Adjust size if needed
+                        checksumBuffer[0] = header[0]; // Header byte 1
+                        checksumBuffer[1] = header[1]; // Header byte 2
+                        // Assuming data[0] is the command byte and data[1] is the length
+                        memcpy(&checksumBuffer[2], data, dataIndex);
+
+                        // Calculate the checksum
+                        uint8_t calculatedChecksum = sumData(sizeof(checksumBuffer) - 1, checksumBuffer);
+
+                        ESP_LOGD(TAG, "Received checksum: 0x%02X", checksum);
+                        ESP_LOGD(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
 
                         if (checksum == calculatedChecksum)
                         {
-                            ESP_LOGW(TAG, "Checksum PASSED!");
+                            ESP_LOGD(TAG, "Checksum PASSED!");
+                            // ... rest of your code (mode checking, etc.) ...
                         }
                         else
                         {
                             ESP_LOGW(TAG, "Checksum error!");
                         }
-                        break;
                     }
                 }
             }
@@ -101,6 +102,17 @@ namespace esphome
         {
             ESP_LOGCONFIG(TAG, "MMWave Component:");
             ESP_LOGCONFIG(TAG, "  UART configured");
+        }
+
+        uint8_t MMWaveComponent::sumData(uint8_t len, uint8_t *buf)
+        {
+            uint16_t data = 0;
+            uint8_t *_buf = buf;
+            for (uint8_t i = 0; i < len; i++)
+            {
+                data += _buf[i];
+            }
+            return data & 0xff;
         }
 
     } // namespace mmwave_component
