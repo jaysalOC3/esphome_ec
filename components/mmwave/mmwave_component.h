@@ -36,6 +36,7 @@ private:
     void process_packet();
     void process_presence_data();
     void process_engineering_data();
+    void handle_uart_data();
     uint8_t sumData(uint8_t len, uint8_t *buf);
 };
 

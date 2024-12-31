@@ -1,4 +1,5 @@
 #include "esphome/core/log.h"
+#include "esphome/core/application.h"
 #include "mmwave_component.h"
 
 namespace esphome
@@ -16,9 +17,23 @@ namespace esphome
         void MMWaveComponent::setup()
         {
             ESP_LOGD(TAG, "Setting up MMWave component... Setup()");
+
+            // Create a task to handle UART data
+            auto uart_task = [this]()
+            {
+                while (true)
+                {
+                    if (this->available())
+                    {
+                        this->handle_uart_data();
+                    }
+                    delay(1); // Yield to other tasks
+                }
+            };
+            App.scheduler.set_interval(this, "mmwave_uart_task", 10, uart_task);
         }
-        void MMWaveComponent::loop()
-        {
+
+        void MMWaveComponent::handle_uart_data() {
             if (this->available())
             {
                 ESP_LOGD(TAG, "Data available on UART");
@@ -71,7 +86,7 @@ namespace esphome
                         state_ = ParseState::STATE_HEADER_START;
                         ESP_LOGD(TAG, "Data Length L: 0x%02X", c);
                         ESP_LOGD(TAG, "The next %d packets are data.", c);
-                        
+
                         for (int i = 0; i < c; i++)
                         {
                             c = this->read();
@@ -81,6 +96,11 @@ namespace esphome
                     }
                 }
             }
+
+        }
+        void MMWaveComponent::loop()
+        {
+            
         }
 
         void MMWaveComponent::process_packet()
