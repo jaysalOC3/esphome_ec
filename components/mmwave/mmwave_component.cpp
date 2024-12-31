@@ -36,15 +36,15 @@ namespace esphome
                         {
                             data_.push_back(c);
                             state_ = ParseState::STATE_HEADER_END;
-                            ESP_LOGD(TAG, "Header Start found");
+                            ESP_LOGD(TAG, "Header start found");
                         }
                         break;
                     case ParseState::STATE_HEADER_END:
-                        if (c == 0x53)
+                        if (c == 0x59)
                         {
                             data_.push_back(c);
                             state_ = ParseState::STATE_CONFIG;
-                            ESP_LOGD(TAG, "Header found");
+                            ESP_LOGD(TAG, "Header Validated");
                         }else{
                             state_ = ParseState::STATE_HEADER_START;
                         }
