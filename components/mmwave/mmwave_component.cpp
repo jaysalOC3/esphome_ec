@@ -93,6 +93,10 @@ namespace esphome
                         {
                             ESP_LOGW(TAG, "Checksum error!");
                         }
+                        // Reset state and dataIndex for the next packet
+                        state = STATE_HEADER_START;
+                        dataIndex = 0;
+                        break;
                     }
                 }
             }
