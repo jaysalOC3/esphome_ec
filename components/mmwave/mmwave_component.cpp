@@ -30,7 +30,7 @@ namespace esphome
 
                     switch (state_)
                     {
-                    case STATE_HEADER_START:
+                    case ParseState::STATE_HEADER_START:
                         data_.clear(); // Clear previous data
                         if (c == 0x53)
                         {
@@ -40,7 +40,7 @@ namespace esphome
                         }
                         break;
 
-                    case STATE_HEADER_END:
+                    case ParseState::STATE_HEADER_END:
                         if (c == 0x59)
                         {
                             data_.push_back(c);
@@ -54,20 +54,20 @@ namespace esphome
                         }
                         break;
 
-                    case STATE_LENGTH_H:
+                    case ParseState::STATE_LENGTH_H:
                         data_.push_back(c);
                         data_length_ = c << 8;
                         state_ = STATE_LENGTH_L;
                         break;
 
-                    case STATE_LENGTH_L:
+                    case ParseState::STATE_LENGTH_L:
                         data_.push_back(c);
                         data_length_ |= c;
                         state_ = STATE_DATA;
                         ESP_LOGD(TAG, "Length: %d", data_length_);
                         break;
 
-                    case STATE_DATA:
+                    case ParseState::STATE_DATA:
                         data_.push_back(c);
                         if (data_.size() >= data_length_ + 4)
                         { // +4 for header and length bytes
@@ -75,7 +75,7 @@ namespace esphome
                         }
                         break;
 
-                    case STATE_CHECKSUM:
+                    case ParseState::STATE_CHECKSUM:
                         data_.push_back(c);
                         {
                             uint8_t calc_checksum = 0;
@@ -97,7 +97,7 @@ namespace esphome
                         }
                         break;
 
-                    case STATE_TAIL_1:
+                    case ParseState::STATE_TAIL_1:
                         data_.push_back(c);
                         if (c == 0x54)
                         {
@@ -110,7 +110,7 @@ namespace esphome
                         }
                         break;
 
-                    case STATE_TAIL_2:
+                    case ParseState::STATE_TAIL_2:
                         if (c == 0x43)
                         {
                             data_.push_back(c);
