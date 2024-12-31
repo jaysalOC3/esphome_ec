@@ -66,10 +66,10 @@ namespace esphome
                         checksum = c;
 
                         // --- Debugging ---
-                        ESP_LOGD(TAG, "Data bytes:");
+                        ESP_LOGW(TAG, "Data bytes:");
                         for (int i = 0; i < dataIndex; i++)
                         {
-                            ESP_LOGD(TAG, "  data[%d]: 0x%02X", i, data[i]);
+                            ESP_LOGW(TAG, "  data[%d]: 0x%02X", i, data[i]);
                         }
                         // --- End Debugging ---
 
@@ -80,8 +80,8 @@ namespace esphome
                             calculatedChecksum += data[i];
                         }
 
-                        ESP_LOGD(TAG, "Received checksum: 0x%02X", checksum);
-                        ESP_LOGD(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
+                        ESP_LOGW(TAG, "Received checksum: 0x%02X", checksum);
+                        ESP_LOGW(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
 
                         if (checksum == calculatedChecksum)
                         {
