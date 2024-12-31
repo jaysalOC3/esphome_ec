@@ -72,7 +72,7 @@ namespace esphome
                         ESP_LOGD(TAG, "Data Length L: 0x%02X", c);
                         ESP_LOGD(TAG, "The next %d packets are data.", c);
                         
-                        for (int c_decimal = c; c_decimal < 3; c_decimal++)
+                        for (int i = 0; i < c; i++)
                         {
                             c = this->read();
                             ESP_LOGD(TAG, "Packet: 0x%02X", c);
