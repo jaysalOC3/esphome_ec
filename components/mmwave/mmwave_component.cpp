@@ -39,6 +39,14 @@ namespace esphome
                             ESP_LOGD(TAG, "Header Start found");
                         }
                         break;
+                    case ParseState::STATE_HEADER_END:
+                        if (c == 0x53)
+                        {
+                            data_.push_back(c);
+                            //state_ = ParseState::STATE_HEADER_END;
+                            ESP_LOGD(TAG, "Header End found");
+                        }
+                        break;
                     }
                 }
             }
