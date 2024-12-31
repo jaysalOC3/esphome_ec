@@ -45,30 +45,37 @@ namespace esphome
                             data_.push_back(c);
                             state_ = ParseState::STATE_CONFIG;
                             ESP_LOGD(TAG, "Header Validated");
-                        }else{
+                        }
+                        else
+                        {
                             state_ = ParseState::STATE_HEADER_START;
                         }
                         break;
                     case ParseState::STATE_CONFIG:
-                        //data_.push_back(c);
+                        // data_.push_back(c);
                         state_ = ParseState::STATE_COMMAND;
                         ESP_LOGD(TAG, "Config found: 0x%02X", c);
                         break;
                     case ParseState::STATE_COMMAND:
-                        //data_.push_back(c);
+                        // data_.push_back(c);
                         state_ = ParseState::STATE_LENGTH_H;
                         ESP_LOGD(TAG, "Command found: 0x%02X", c);
                         break;
                     case ParseState::STATE_LENGTH_H:
-                        //data_.push_back(c);
+                        // data_.push_back(c);
                         state_ = ParseState::STATE_LENGTH_L;
                         ESP_LOGD(TAG, "Data Length H: 0x%02X", c);
                         break;
                     case ParseState::STATE_LENGTH_L:
-                        //data_.push_back(c);
+                        // data_.push_back(c);
                         state_ = ParseState::STATE_HEADER_START;
                         ESP_LOGD(TAG, "Data Length L: 0x%02X", c);
                         ESP_LOGD(TAG, "The next %d packets are data.", c);
+                        
+                        for (int c_decimal = c; c_decimal < 3; c_decimal++)
+                        {
+                            ESP_LOGD(TAG, "Packet: 0x%02X", c);
+                        }
                         break;
                     }
                 }
