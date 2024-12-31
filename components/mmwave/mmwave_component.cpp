@@ -74,6 +74,7 @@ namespace esphome
                         
                         for (int c_decimal = c; c_decimal < 3; c_decimal++)
                         {
+                            c = this->read();
                             ESP_LOGD(TAG, "Packet: 0x%02X", c);
                         }
                         break;
