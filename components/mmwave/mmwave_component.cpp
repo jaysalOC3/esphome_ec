@@ -64,37 +64,33 @@ namespace esphome
                         break;
                     case STATE_CHECKSUM:
                         checksum = c;
-                        // TODO: Implement your checksum calculation here
-                        // Example (replace with your actual checksum logic):
+
+                        // --- Debugging ---
+                        ESP_LOGD(TAG, "Data bytes:");
+                        for (int i = 0; i < dataIndex; i++)
+                        {
+                            ESP_LOGD(TAG, "  data[%d]: 0x%02X", i, data[i]);
+                        }
+                        // --- End Debugging ---
+
+                        // Example checksum calculation (replace with your actual logic)
                         uint8_t calculatedChecksum = 0;
                         for (int i = 0; i < dataIndex; i++)
                         {
                             calculatedChecksum += data[i];
                         }
+
+                        ESP_LOGD(TAG, "Received checksum: 0x%02X", checksum);
+                        ESP_LOGD(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
+
                         if (checksum == calculatedChecksum)
                         {
-                            // Check if the command is a response to a mode query (0x02, 0xA8)
-                            if (header[0] == 0x02 && header[1] == 0xA8)
-                            {
-                                // Check the current mode from the data bytes (assuming it's at data[6])
-                                // Replace '1' with your desired mode from eWorkMode
-                                if (data[6] != 1)
-                                {
-                                    ESP_LOGW(TAG, "Sensor in incorrect mode: %d", data[6]);
-                                    // TODO: Implement mode switching logic here (e.g., call configWorkMode)
-                                }
-                                else
-                                {
-                                    ESP_LOGD(TAG, "Sensor in correct mode");
-                                }
-                            }
-                            // TODO: Process other valid packets as needed
+                            ESP_LOGW(TAG, "Checksum PASSED!");
                         }
                         else
                         {
                             ESP_LOGW(TAG, "Checksum error!");
                         }
-                        state = STATE_HEADER_START; // Start looking for the next packet
                         break;
                     }
                 }
