@@ -35,7 +35,8 @@ namespace esphome
                 while (this->available())
                 {
                     uint8_t c = this->read();
-
+                    ESP_LOGW(TAG, "Data: 0x%02X", c);
+                    
                     switch (state)
                     {
                     case STATE_HEADER_START:
