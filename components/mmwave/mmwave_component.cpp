@@ -18,17 +18,20 @@ namespace esphome
             if (this->available())
             {
                 ESP_LOGW(TAG, "Data available on UART; Loop()");
-                // State machine variables
+
                 static enum {
                     STATE_HEADER_START,
                     STATE_HEADER_END,
                     STATE_LENGTH_H,
                     STATE_LENGTH_L,
                     STATE_DATA,
-                    STATE_CHECKSUM
+                    STATE_CHECKSUM,
+                    STATE_TAIL_1,
+                    STATE_TAIL_2,
                 } state = STATE_HEADER_START;
 
-                static uint8_t data[12];
+                // Use a larger buffer or dynamic allocation if needed
+                static uint8_t data[20];
                 static uint8_t dataIndex = 0;
                 static uint16_t dataLength = 0;
 
@@ -36,7 +39,7 @@ namespace esphome
                 {
                     uint8_t c = this->read();
                     ESP_LOGW(TAG, "Data: 0x%02X", c);
-                    
+
                     switch (state)
                     {
                     case STATE_HEADER_START:
@@ -48,7 +51,7 @@ namespace esphome
                         }
                         else
                         {
-                            dataIndex = 0; // Reset if not header start
+                            dataIndex = 0;
                             ESP_LOGE(TAG, "Error: Expecting Header Start: 0x53");
                             ESP_LOGE(TAG, "Got: 0x%02X", c);
                         }
@@ -62,9 +65,9 @@ namespace esphome
                         }
                         else
                         {
-                            state = STATE_HEADER_START; // Reset if not header end
+                            state = STATE_HEADER_START;
                             dataIndex = 0;
-                            ESP_LOGE(TAG, "Error: Expecting Header End: 0x59 (Resetting States)");
+                            ESP_LOGE(TAG, "Error: Expecting Header End: 0x59");
                         }
                         break;
                     case STATE_LENGTH_H:
@@ -80,14 +83,15 @@ namespace esphome
                     case STATE_DATA:
                         data[dataIndex++] = c;
                         if (dataIndex >= dataLength + 6)
-                        {
+                        { // +6 for header, con, cmd, lenH, lenL
                             state = STATE_CHECKSUM;
                         }
                         break;
                     case STATE_CHECKSUM:
-                        // ... (Logging code remains the same) ...
+                    {
+                        data[dataIndex++] = c;
 
-                        // Calculate checksum (optimized)
+                        // Calculate checksum
                         uint8_t calculatedChecksum = 0;
                         for (int i = 0; i < dataIndex - 1; i++)
                         {
@@ -95,16 +99,70 @@ namespace esphome
                         }
                         calculatedChecksum &= 0xFF;
 
-                        // ... (Logging and checksum comparison remain the same) ...
+                        if (calculatedChecksum == c)
+                        {
+                            ESP_LOGW(TAG, "Checksum OK");
+                            state = STATE_TAIL_1;
+                        }
+                        else
+                        {
+                            ESP_LOGE(TAG, "Checksum Error: Expected 0x%02X, Got 0x%02X",
+                                     calculatedChecksum, c);
+                            state = STATE_HEADER_START;
+                            dataIndex = 0;
+                            dataLength = 0;
+                        }
+                        break;
+                    }
+                    case STATE_TAIL_1:
+                        if (c == 0x54)
+                        {
+                            data[dataIndex++] = c;
+                            state = STATE_TAIL_2;
+                        }
+                        else
+                        {
+                            ESP_LOGE(TAG, "Error: Expecting Tail Byte 1 (0x54)");
+                            state = STATE_HEADER_START;
+                            dataIndex = 0;
+                            dataLength = 0;
+                        }
+                        break;
+                    case STATE_TAIL_2:
+                        if (c == 0x43)
+                        {
+                            data[dataIndex++] = c;
+                            ESP_LOGW(TAG, "Complete message received");
 
-                        // Reset state and dataIndex
-                        state = STATE_HEADER_START;
-                        dataIndex = 0;
-                        dataLength = 0;
+                            // Process the received data here
+                            processSensorData(data, dataIndex);
+
+                            state = STATE_HEADER_START;
+                            dataIndex = 0;
+                            dataLength = 0;
+                        }
+                        else
+                        {
+                            ESP_LOGE(TAG, "Error: Expecting Tail Byte 2 (0x43)");
+                            state = STATE_HEADER_START;
+                            dataIndex = 0;
+                            dataLength = 0;
+                        }
                         break;
                     }
                 }
             }
+        }
+
+        // Example data processing function (replace with your actual logic)
+        void MMWaveComponent::processSensorData(uint8_t *data, uint8_t dataLen)
+        {
+            ESP_LOGI(TAG, "Processing sensor data:");
+            for (int i = 0; i < dataLen; i++)
+            {
+                ESP_LOGI(TAG, "  data[%d] = 0x%02X", i, data[i]);
+            }
+            // ... decode and use the sensor data ...
         }
 
         void MMWaveComponent::dump_config()
@@ -124,5 +182,5 @@ namespace esphome
             return data & 0xff;
         }
 
-        } // namespace mmwave_component
-    } // namespace esphome
+    } // namespace mmwave_component
+} // namespace esphome

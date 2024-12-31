@@ -13,6 +13,7 @@ class MMWaveComponent : public uart::UARTDevice, public Component {
     void dump_config() override;
 
   private:
+    void processSensorData(uint8_t *data, uint8_t dataLen);
     uint8_t sumData(uint8_t len, uint8_t *buf);
 };
 
