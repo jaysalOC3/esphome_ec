@@ -26,7 +26,7 @@ namespace esphome
                 } state = STATE_HEADER_START;
 
                 static uint8_t header[2]; // Assuming a 2-byte header
-                static uint8_t data[10];  // Assuming 10 bytes of data (adjust as needed)
+                static uint8_t data[12];   // Assuming a 12-byte data packet
                 static uint8_t dataIndex = 0;
                 static uint8_t checksum;
 
@@ -39,52 +39,44 @@ namespace esphome
                     case STATE_HEADER_START:
                         if (c == 0x53)
                         { // First header byte
-                            header[0] = c;
+                            data[dataIndex++] = c; // Save the byte
                             state = STATE_HEADER_END;
                         }
                         break;
                     case STATE_HEADER_END:
                         if (c == 0x59)
                         { // Second header byte
-                            header[1] = c;
+                            data[dataIndex++] = c; // Save the byte
                             state = STATE_DATA;
-                            dataIndex = 0;
                         }
                         else
                         {
                             state = STATE_HEADER_START; // Invalid header, restart
+                            dataIndex = 0;              // Reset dataIndex
                         }
                         break;
                     case STATE_DATA:
                         data[dataIndex++] = c;
-                        if (dataIndex >= sizeof(data))
-                        {
+                        // Assuming fixed data length of 10 bytes (including command, length, etc.)
+                        if (dataIndex >= 12)
+                        { // Check if all 12 bytes are received
                             state = STATE_CHECKSUM;
                         }
                         break;
                     case STATE_CHECKSUM:
-                        checksum = c;
-
                         ESP_LOGD(TAG, "Data bytes:");
                         for (int i = 0; i < dataIndex; i++)
                         {
                             ESP_LOGD(TAG, "  data[%d]: 0x%02X", i, data[i]);
                         }
 
-                        // Create a temporary buffer for checksum calculation
-                        uint8_t checksumBuffer[14];    // Adjust size if needed
-                        checksumBuffer[0] = header[0]; // Header byte 1
-                        checksumBuffer[1] = header[1]; // Header byte 2
-                        // Assuming data[0] is the command byte and data[1] is the length
-                        memcpy(&checksumBuffer[2], data, dataIndex);
+                        // Calculate checksum using the received data (excluding the last byte)
+                        uint8_t calculatedChecksum = sumData(dataIndex - 1, data);
 
-                        // Calculate the checksum
-                        uint8_t calculatedChecksum = sumData(sizeof(checksumBuffer) - 1, checksumBuffer);
-
-                        ESP_LOGD(TAG, "Received checksum: 0x%02X", checksum);
+                        ESP_LOGD(TAG, "Received checksum: 0x%02X", c);
                         ESP_LOGD(TAG, "Calculated checksum: 0x%02X", calculatedChecksum);
 
-                        if (checksum == calculatedChecksum)
+                        if (c == calculatedChecksum)
                         {
                             ESP_LOGD(TAG, "Checksum PASSED!");
                             // ... rest of your code (mode checking, etc.) ...
@@ -93,6 +85,7 @@ namespace esphome
                         {
                             ESP_LOGW(TAG, "Checksum error!");
                         }
+
                         // Reset state and dataIndex for the next packet
                         state = STATE_HEADER_START;
                         dataIndex = 0;
