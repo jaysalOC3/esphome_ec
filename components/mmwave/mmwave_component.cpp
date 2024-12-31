@@ -42,10 +42,12 @@ namespace esphome
                         {
                             data[dataIndex++] = c;
                             state = STATE_HEADER_END;
+                            ESP_LOGW(TAG, "Found Header Start: 0x53");
                         }
                         else
                         {
                             dataIndex = 0; // Reset if not header start
+                            ESP_LOGE(TAG, "Error: Expecting Header Start: 0x53");
                         }
                         break;
                     case STATE_HEADER_END:
@@ -53,11 +55,13 @@ namespace esphome
                         {
                             data[dataIndex++] = c;
                             state = STATE_LENGTH_H;
+                            ESP_LOGW(TAG, "Found Header End: 0x59");
                         }
                         else
                         {
                             state = STATE_HEADER_START; // Reset if not header end
                             dataIndex = 0;
+                            ESP_LOGE(TAG, "Error: Expecting Header End: 0x59 (Resetting States)");
                         }
                         break;
                     case STATE_LENGTH_H:
