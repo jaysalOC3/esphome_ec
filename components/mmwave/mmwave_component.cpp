@@ -69,7 +69,7 @@ namespace esphome
 
                     case ParseState::STATE_DATA:
                         data_.push_back(c);
-                        if (data_.size() >= (data_length_ + 4))
+                        if (data_.size() == data_length_)
                         {
                             state_ = ParseState::STATE_CHECKSUM;
                             ESP_LOGD(TAG, "Data complete, moving to checksum. Size: %d, Expected: %d",
