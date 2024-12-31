@@ -64,8 +64,9 @@ namespace esphome
                         break;
                     case ParseState::STATE_LENGTH_L:
                         //data_.push_back(c);
-                        state_ = ParseState::STATE_CONFIG;
+                        state_ = ParseState::STATE_HEADER_START;
                         ESP_LOGD(TAG, "Data Length L: 0x%02X", c);
+                        ESP_LOGD(TAG, "The next %d packets are data.", c);
                         break;
                     }
                 }
