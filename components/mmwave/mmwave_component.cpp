@@ -35,7 +35,7 @@ namespace esphome
                         if (c == 0x53)
                         {
                             data_.push_back(c);
-                            state_ = STATE_HEADER_END;
+                            state_ = ParseState::STATE_HEADER_END;
                             ESP_LOGD(TAG, "Header Start found");
                         }
                         break;
@@ -44,12 +44,12 @@ namespace esphome
                         if (c == 0x59)
                         {
                             data_.push_back(c);
-                            state_ = STATE_LENGTH_H;
+                            state_ = ParseState::STATE_LENGTH_H;
                             ESP_LOGD(TAG, "Header End found");
                         }
                         else
                         {
-                            state_ = STATE_HEADER_START;
+                            state_ = ParseState::STATE_HEADER_START;
                             ESP_LOGW(TAG, "Invalid header end byte");
                         }
                         break;
@@ -57,21 +57,23 @@ namespace esphome
                     case ParseState::STATE_LENGTH_H:
                         data_.push_back(c);
                         data_length_ = c << 8;
-                        state_ = STATE_LENGTH_L;
+                        state_ = ParseState::STATE_LENGTH_L;
                         break;
 
                     case ParseState::STATE_LENGTH_L:
                         data_.push_back(c);
                         data_length_ |= c;
-                        state_ = STATE_DATA;
+                        state_ = ParseState::STATE_DATA;
                         ESP_LOGD(TAG, "Length: %d", data_length_);
                         break;
 
                     case ParseState::STATE_DATA:
                         data_.push_back(c);
-                        if (data_.size() >= data_length_ + 4)
-                        { // +4 for header and length bytes
-                            state_ = STATE_CHECKSUM;
+                        if (data_.size() >= (data_length_ + 4))
+                        {
+                            state_ = ParseState::STATE_CHECKSUM;
+                            ESP_LOGD(TAG, "Data complete, moving to checksum. Size: %d, Expected: %d",
+                                     data_.size(), data_length_ + 4);
                         }
                         break;
 
@@ -85,14 +87,14 @@ namespace esphome
                             }
                             if (calc_checksum == c)
                             {
-                                state_ = STATE_TAIL_1;
+                                state_ = ParseState::STATE_TAIL_1;
                                 ESP_LOGD(TAG, "Checksum valid");
                             }
                             else
                             {
                                 ESP_LOGE(TAG, "Checksum mismatch: expected 0x%02X, got 0x%02X",
                                          calc_checksum, c);
-                                state_ = STATE_HEADER_START;
+                                state_ = ParseState::STATE_HEADER_START;
                             }
                         }
                         break;
@@ -101,12 +103,12 @@ namespace esphome
                         data_.push_back(c);
                         if (c == 0x54)
                         {
-                            state_ = STATE_TAIL_2;
+                            state_ = ParseState::STATE_TAIL_2;
                         }
                         else
                         {
                             ESP_LOGE(TAG, "Invalid tail byte 1");
-                            state_ = STATE_HEADER_START;
+                            state_ = ParseState::STATE_HEADER_START;
                         }
                         break;
 
@@ -120,7 +122,7 @@ namespace esphome
                         {
                             ESP_LOGE(TAG, "Invalid tail byte 2");
                         }
-                        state_ = STATE_HEADER_START;
+                        state_ = ParseState::STATE_HEADER_START;
                         break;
                     }
                 }
