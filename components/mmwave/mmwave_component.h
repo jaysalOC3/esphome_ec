@@ -18,12 +18,14 @@ protected:
     enum ParseState {
         STATE_HEADER_START,
         STATE_HEADER_END,
+        STATE_CONFIG,
+        STATE_COMMAND,
         STATE_LENGTH_H,
         STATE_LENGTH_L,
         STATE_DATA,
         STATE_CHECKSUM,
-        STATE_TAIL_1,
-        STATE_TAIL_2,
+        STATE_FOOTER_START,
+        STATE_FOOTER_END,
     };
     
     ParseState state_{STATE_HEADER_START};
