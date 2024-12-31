@@ -17,6 +17,7 @@ namespace esphome
         {
             if (this->available())
             {
+                ESP_LOGW(TAG, "Data available on UART; Loop()");
                 // State machine variables
                 static enum {
                     STATE_HEADER_START,
