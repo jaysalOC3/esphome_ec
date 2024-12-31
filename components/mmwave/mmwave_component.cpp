@@ -28,7 +28,7 @@ namespace esphome
                     STATE_CHECKSUM
                 } state = STATE_HEADER_START;
 
-                static uint8_t data[128]; // Reduced size, adjust if needed
+                static uint8_t data[12];
                 static uint8_t dataIndex = 0;
                 static uint16_t dataLength = 0;
 
