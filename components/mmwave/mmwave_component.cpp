@@ -49,6 +49,7 @@ namespace esphome
                         {
                             dataIndex = 0; // Reset if not header start
                             ESP_LOGE(TAG, "Error: Expecting Header Start: 0x53");
+                            ESP_LOGE(TAG, "Got: 0x%02X", c);
                         }
                         break;
                     case STATE_HEADER_END:
