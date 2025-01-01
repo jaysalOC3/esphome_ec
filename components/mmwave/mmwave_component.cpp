@@ -25,12 +25,13 @@ namespace esphome
                 {
                     if (this->available())
                     {
-                        this->handle_uart_data();
+                        //this->handle_uart_data();
+                        ESP_LOGD(TAG, "handle_uart_data()");
                     }
                     delay(1); // Yield to other tasks
                 }
             };
-            // App.scheduler.set_interval(this, "mmwave_uart_task", 10, uart_task);
+            App.scheduler.set_interval(this, "mmwave_uart_task", 10, uart_task);
         }
 
         void MMWaveComponent::handle_uart_data() {
