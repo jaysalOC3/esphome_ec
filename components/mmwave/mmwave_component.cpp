@@ -30,7 +30,7 @@ namespace esphome
                     delay(1); // Yield to other tasks
                 }
             };
-            App.scheduler.set_interval(this, "mmwave_uart_task", 10, uart_task);
+            // App.scheduler.set_interval(this, "mmwave_uart_task", 10, uart_task);
         }
 
         void MMWaveComponent::handle_uart_data() {
@@ -100,7 +100,7 @@ namespace esphome
         }
         void MMWaveComponent::loop()
         {
-            
+            delay(1);
         }
 
         void MMWaveComponent::process_packet()
