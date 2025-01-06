@@ -136,44 +136,20 @@ namespace esphome
         void MMWaveComponent::process_packet()
         {
             if (data_.size() < 8)
-            { // Need at least 8 bytes to read length
-                ESP_LOGW(TAG, "Packet too short to read length bytes");
+            {
+                ESP_LOGW(TAG, "Packet too short");
                 return;
             }
 
-            // Read length from bytes 6 and 7
-            uint16_t data_length = (data_[6] << 8) | data_[7];
+            uint16_t data_length = (data_[4] << 8) | data_[5]; // Corrected Indexing
             ESP_LOGD(TAG, "Data length from packet: %d bytes", data_length);
 
-            // Read the specified number of bytes from UART
-            std::vector<uint8_t> payload;
-            payload.reserve(data_length);
+            uint8_t cmd = data_[2];
+            // Now the payload is simply a view into the existing data_ vector
+            const uint8_t *payload_start = data_.data() + 6;
+            size_t payload_size = data_length;
+            std::vector<uint8_t> payload(payload_start, payload_start + payload_size);
 
-            uint32_t start_time = millis();
-            while (payload.size() < data_length)
-            {
-                if (this->available())
-                {
-                    uint8_t c = this->read();
-                    payload.push_back(c);
-                    last_byte_time_ = millis();
-                }
-
-                // Check for timeout
-                if ((millis() - start_time) > PACKET_TIMEOUT_MS)
-                {
-                    ESP_LOGW(TAG, "Timeout while reading payload. Expected %d bytes, got %d",
-                             data_length, payload.size());
-                    return;
-                }
-
-                delay(1); // Small delay to prevent watchdog issues
-            }
-
-            ESP_LOGD(TAG, "Successfully read %d bytes of payload", payload.size());
-
-            // Process the payload based on command type
-            uint8_t cmd = data_[2]; // Command byte
             switch (cmd)
             {
             case 0x80:
@@ -188,13 +164,13 @@ namespace esphome
             }
         }
 
-        void MMWaveComponent::process_presence_data(const std::vector<uint8_t>& payload)
+        void MMWaveComponent::process_presence_data(const std::vector<uint8_t> &payload)
         {
             ESP_LOGD(TAG, "Processing presence data");
             // Add specific processing for presence detection data
         }
 
-        void MMWaveComponent::process_engineering_data(const std::vector<uint8_t>& payload)
+        void MMWaveComponent::process_engineering_data(const std::vector<uint8_t> &payload)
         {
             ESP_LOGD(TAG, "Processing engineering data");
             // Add specific processing for engineering mode data
