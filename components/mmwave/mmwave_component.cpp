@@ -135,12 +135,6 @@ namespace esphome
 
         void MMWaveComponent::process_packet()
         {
-            if (data_.size() < 8)
-            {
-                ESP_LOGW(TAG, "Packet too short");
-                return;
-            }
-
             uint16_t data_length = (data_[4] << 8) | data_[5]; // Corrected Indexing
             ESP_LOGD(TAG, "Data length from packet: %d bytes", data_length);
 
