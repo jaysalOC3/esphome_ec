@@ -19,7 +19,7 @@ void MMWaveComponent::setup() {
 }
 
 void MMWaveComponent::loop() {
-    //handle_uart_data();
+    handle_uart_data();
     delay(10);  // Reduced from continuous polling to prevent watchdog issues
 }
 
