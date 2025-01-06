@@ -37,61 +37,61 @@ void MMWaveComponent::handle_uart_data() {
         uint8_t c = this->read();
         ESP_LOGV(TAG, "State: %d, Byte: 0x%02X", (int)state_, c);  // Changed to LOGV for less verbose logging
 
-        // switch (state_) {
-        //     case ParseState::STATE_HEADER_START:
-        //         data_.clear();
-        //         if (c == 0x53) {
-        //             data_.push_back(c);
-        //             state_ = ParseState::STATE_HEADER_END;
-        //         }
-        //         break;
+        switch (state_) {
+            case ParseState::STATE_HEADER_START:
+                data_.clear();
+                if (c == 0x53) {
+                    data_.push_back(c);
+                    state_ = ParseState::STATE_HEADER_END;
+                }
+                break;
 
-        //     case ParseState::STATE_HEADER_END:
-        //         if (c == 0x59) {
-        //             data_.push_back(c);
-        //             state_ = ParseState::STATE_CONFIG;
-        //         } else {
-        //             state_ = ParseState::STATE_HEADER_START;
-        //         }
-        //         break;
+            case ParseState::STATE_HEADER_END:
+                if (c == 0x59) {
+                    data_.push_back(c);
+                    state_ = ParseState::STATE_CONFIG;
+                } else {
+                    state_ = ParseState::STATE_HEADER_START;
+                }
+                break;
 
-        //     case ParseState::STATE_CONFIG:
-        //         data_.push_back(c);
-        //         state_ = ParseState::STATE_COMMAND;
-        //         break;
+            case ParseState::STATE_CONFIG:
+                data_.push_back(c);
+                state_ = ParseState::STATE_COMMAND;
+                break;
 
-        //     case ParseState::STATE_COMMAND:
-        //         data_.push_back(c);
-        //         state_ = ParseState::STATE_LENGTH_H;
-        //         break;
+            case ParseState::STATE_COMMAND:
+                data_.push_back(c);
+                state_ = ParseState::STATE_LENGTH_H;
+                break;
 
-        //     case ParseState::STATE_LENGTH_H:
-        //         data_.push_back(c);
-        //         data_length_ = c << 8;
-        //         state_ = ParseState::STATE_LENGTH_L;
-        //         break;
+            case ParseState::STATE_LENGTH_H:
+                data_.push_back(c);
+                data_length_ = c << 8;
+                state_ = ParseState::STATE_LENGTH_L;
+                break;
 
-        //     case ParseState::STATE_LENGTH_L:
-        //         data_.push_back(c);
-        //         data_length_ |= c;
+            case ParseState::STATE_LENGTH_L:
+                data_.push_back(c);
+                data_length_ |= c;
                 
-        //         if (data_length_ > MAX_PACKET_SIZE - 8) {  // Account for headers and checksum
-        //             ESP_LOGW(TAG, "Invalid length: %d", data_length_);
-        //             state_ = ParseState::STATE_HEADER_START;
-        //             return;
-        //         }
+                if (data_length_ > MAX_PACKET_SIZE - 8) {  // Account for headers and checksum
+                    ESP_LOGW(TAG, "Invalid length: %d", data_length_);
+                    state_ = ParseState::STATE_HEADER_START;
+                    return;
+                }
                 
-        //         state_ = ParseState::STATE_DATA;
-        //         break;
+                state_ = ParseState::STATE_DATA;
+                break;
 
-        //     case ParseState::STATE_DATA:
-        //         data_.push_back(c);
-        //         if (data_.size() >= data_length_ + 6) {  // Header(2) + Config(1) + Command(1) + Length(2) + Data
-        //             process_packet();
-        //             state_ = ParseState::STATE_HEADER_START;
-        //         }
-        //         break;
-        // }
+            case ParseState::STATE_DATA:
+                data_.push_back(c);
+                if (data_.size() >= data_length_ + 6) {  // Header(2) + Config(1) + Command(1) + Length(2) + Data
+                    process_packet();
+                    state_ = ParseState::STATE_HEADER_START;
+                }
+                break;
+        }
     }
 }
 
