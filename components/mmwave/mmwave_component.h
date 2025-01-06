@@ -19,8 +19,8 @@ namespace esphome
 
         private:
             void process_packet();
-            void process_presence_data();
-            void process_engineering_data();
+            void process_presence_data(const std::vector<uint8_t>& payload);
+            void process_engineering_data(const std::vector<uint8_t>& payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
             static const uint32_t PACKET_TIMEOUT_MS = 100; // Timeout in milliseconds

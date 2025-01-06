@@ -135,21 +135,52 @@ namespace esphome
 
         void MMWaveComponent::process_packet()
         {
-            if (data_.size() < 6)
-            {
-                ESP_LOGW(TAG, "Packet too short");
+            if (data_.size() < 8)
+            { // Need at least 8 bytes to read length
+                ESP_LOGW(TAG, "Packet too short to read length bytes");
                 return;
             }
 
-            uint8_t cmd = data_[2]; // Command byte after header and config
+            // Read length from bytes 6 and 7
+            uint16_t data_length = (data_[6] << 8) | data_[7];
+            ESP_LOGD(TAG, "Data length from packet: %d bytes", data_length);
 
+            // Read the specified number of bytes from UART
+            std::vector<uint8_t> payload;
+            payload.reserve(data_length);
+
+            uint32_t start_time = millis();
+            while (payload.size() < data_length)
+            {
+                if (this->available())
+                {
+                    uint8_t c = this->read();
+                    payload.push_back(c);
+                    last_byte_time_ = millis();
+                }
+
+                // Check for timeout
+                if ((millis() - start_time) > PACKET_TIMEOUT_MS)
+                {
+                    ESP_LOGW(TAG, "Timeout while reading payload. Expected %d bytes, got %d",
+                             data_length, payload.size());
+                    return;
+                }
+
+                delay(1); // Small delay to prevent watchdog issues
+            }
+
+            ESP_LOGD(TAG, "Successfully read %d bytes of payload", payload.size());
+
+            // Process the payload based on command type
+            uint8_t cmd = data_[2]; // Command byte
             switch (cmd)
             {
             case 0x80:
-                process_presence_data();
+                process_presence_data(payload);
                 break;
             case 0x85:
-                process_engineering_data();
+                process_engineering_data(payload);
                 break;
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
@@ -157,13 +188,13 @@ namespace esphome
             }
         }
 
-        void MMWaveComponent::process_presence_data()
+        void MMWaveComponent::process_presence_data(const std::vector<uint8_t>& payload)
         {
             ESP_LOGD(TAG, "Processing presence data");
             // Add specific processing for presence detection data
         }
 
-        void MMWaveComponent::process_engineering_data()
+        void MMWaveComponent::process_engineering_data(const std::vector<uint8_t>& payload)
         {
             ESP_LOGD(TAG, "Processing engineering data");
             // Add specific processing for engineering mode data
