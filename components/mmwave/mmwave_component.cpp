@@ -50,6 +50,7 @@ void MMWaveComponent::handle_uart_data() {
                 if (c == 0x59) {
                     data_.push_back(c);
                     state_ = ParseState::STATE_CONFIG;
+                    ESP_LOGD(TAG, "Header found.");
                 } else {
                     state_ = ParseState::STATE_HEADER_START;
                 }
@@ -101,18 +102,7 @@ void MMWaveComponent::process_packet() {
         return;
     }
 
-    uint8_t cmd = data_[3];  // Command byte after header and config
-    
-    #ifdef ESPHOME_LOG_LEVEL_DEBUG
-    // Only build string if debug logging is enabled
-    std::string packet_hex;
-    char hex[4];
-    for (uint8_t byte : data_) {
-        snprintf(hex, sizeof(hex), "%02X ", byte);
-        packet_hex += hex;
-    }
-    ESP_LOGD(TAG, "Complete packet: %s", packet_hex.c_str());
-    #endif
+    uint8_t cmd = data_[2];  // Command byte after header and config
 
     switch (cmd) {
         case 0x80:
