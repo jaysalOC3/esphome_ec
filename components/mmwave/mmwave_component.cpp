@@ -41,6 +41,7 @@ namespace esphome
         void MMWaveComponent::handle_uart_data()
         {
             static const uint8_t MAX_PACKET_SIZE = 32;
+            static const uint8_t HEADER_SIZE = 6; // SY + Config + Command + Length(2)
 
             while (this->available())
             {
@@ -53,14 +54,14 @@ namespace esphome
                 }
 
                 uint8_t c = this->read();
-                ESP_LOGV(TAG, "State: %d, Byte: 0x%02X", (int)state_, c); // Changed to LOGV for less verbose logging
+                last_byte_time_ = millis();
 
                 switch (state_)
                 {
                 case ParseState::STATE_HEADER_START:
                     data_.clear();
                     if (c == 0x53)
-                    {
+                    { // 'S'
                         data_.push_back(c);
                         state_ = ParseState::STATE_HEADER_END;
                     }
@@ -68,10 +69,10 @@ namespace esphome
 
                 case ParseState::STATE_HEADER_END:
                     if (c == 0x59)
-                    {
+                    { // 'Y'
                         data_.push_back(c);
                         state_ = ParseState::STATE_CONFIG;
-                        ESP_LOGD(TAG, "Header found.");
+                        ESP_LOGD(TAG, "Header found");
                     }
                     else
                     {
@@ -99,22 +100,29 @@ namespace esphome
                     data_.push_back(c);
                     data_length_ |= c;
 
-                    if (data_length_ > MAX_PACKET_SIZE - 8)
-                    { // Account for headers and checksum
+                    // Validate packet length
+                    if (data_length_ > MAX_PACKET_SIZE - HEADER_SIZE)
+                    {
                         ESP_LOGW(TAG, "Invalid length: %d", data_length_);
                         state_ = ParseState::STATE_HEADER_START;
                         return;
                     }
+
+                    // Calculate total expected bytes
+                    bytes_remaining_ = data_length_;
+                    expected_packet_size_ = HEADER_SIZE + data_length_;
+
+                    ESP_LOGD(TAG, "Expecting %d bytes of data (total packet size: %d)",
+                             data_length_, expected_packet_size_);
 
                     state_ = ParseState::STATE_DATA;
                     break;
 
                 case ParseState::STATE_DATA:
                     data_.push_back(c);
-                    bytes_remaining_--;
-                    last_byte_time_ = millis();
 
-                    if (bytes_remaining_ == 0)
+                    // Check if we have received all expected bytes
+                    if (data_.size() == expected_packet_size_)
                     {
                         ESP_LOGV(TAG, "Received complete packet of %d bytes", data_.size());
                         process_packet();
