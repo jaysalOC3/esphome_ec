@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, text_sensor  # Import text_sensor
+from esphome.components import uart, text_sensor, binary_sensor
 from esphome.const import CONF_ID, CONF_NAME
 
 DEPENDENCIES = ["uart"]
@@ -11,6 +11,7 @@ MMWaveComponent = mmwave_component_ns.class_(
 )
 
 CONF_PACKET_TEXT_SENSOR_ID = "packet_text_sensor_id"
+CONF_HUMAN_PRESENCE_SENSOR_ID = "human_presence_sensor_id"
 CONF_NUM_PACKETS = "num_packets"
 
 CONFIG_SCHEMA = (
@@ -24,6 +25,12 @@ CONFIG_SCHEMA = (
                 }
             ),
             cv.Optional(CONF_NUM_PACKETS, default=5): cv.int_,
+            cv.Optional(CONF_HUMAN_PRESENCE_SENSOR_ID): binary_sensor.BINARY_SENSOR_SCHEMA.extend(  # Add this
+                {
+                    cv.GenerateID(): cv.declare_id(binary_sensor.BinarySensor),
+                    cv.Optional(CONF_NAME): cv.string,
+                }
+            ),
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
@@ -42,3 +49,9 @@ async def to_code(config):
         sens = cg.new_Pvariable(conf[CONF_ID])
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_packet_text_sensor(sens))
+
+    if CONF_HUMAN_PRESENCE_SENSOR_ID in config: 
+        conf = config[CONF_HUMAN_PRESENCE_SENSOR_ID]
+        sens = cg.new_Pvariable(conf[CONF_ID])
+        await binary_sensor.register_binary_sensor(sens, conf)
+        cg.add(var.set_human_presence_sensor(sens)) 

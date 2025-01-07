@@ -136,11 +136,11 @@ namespace esphome
 
         void MMWaveComponent::process_packet()
         {
-            uint16_t data_length = (data_[4] << 8) | data_[5]; // Corrected Indexing
+            uint16_t data_length = (data_[4] << 8) | data_[5];
             ESP_LOGV(TAG, "Data length from packet: %d bytes", data_length);
 
             uint8_t cmd = data_[2];
-            ESP_LOGV(TAG, "Command received: 0x%02X", cmd); // Log the command
+            ESP_LOGV(TAG, "Command received: 0x%02X", cmd);
 
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
@@ -150,7 +150,10 @@ namespace esphome
             switch (cmd)
             {
             case 0x80:
-                process_presence_data(payload); // Now just stores the packet
+                if (data_[3] == 0x03){
+                    ESP_LOGD(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
+                }
+                //process_presence_data(payload); // Now just stores the packet
                 break;
             case 0x85:
                 process_engineering_data(payload);
@@ -165,7 +168,7 @@ namespace esphome
         {
             ESP_LOGD(TAG, "Storing presence data packet");
             std::stringstream ss;
-            ss << "Raw Packet (Cmd 0x80):";
+            ss << "Raw Packet(s) (Cmd 0x80):";
             for (uint8_t byte : data_) {
                 ss << " " << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(byte);
             }
