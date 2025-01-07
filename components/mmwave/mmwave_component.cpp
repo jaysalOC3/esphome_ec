@@ -144,6 +144,8 @@ namespace esphome
             size_t payload_size = data_length;
             std::vector<uint8_t> payload(payload_start, payload_start + payload_size);
 
+            ESP_LOGW(TAG, "Command received: 0x%02X", cmd);
+
             switch (cmd)
             {
             case 0x80:
@@ -162,6 +164,10 @@ namespace esphome
         {
             ESP_LOGD(TAG, "Processing presence data");
             // Add specific processing for presence detection data
+            for (size_t i = 0; i < payload.size(); i++)
+            {
+                ESP_LOGD(TAG, "Payload byte %d: 0x%02X", i, payload[i]);
+            }
         }
 
         void MMWaveComponent::process_engineering_data(const std::vector<uint8_t> &payload)
