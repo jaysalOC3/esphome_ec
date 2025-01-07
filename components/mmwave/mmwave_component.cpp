@@ -112,9 +112,6 @@ namespace esphome
                     bytes_remaining_ = data_length_;
                     expected_packet_size_ = HEADER_SIZE + data_length_;
 
-                    ESP_LOGD(TAG, "Expecting %d bytes of data (total packet size: %d)",
-                             data_length_, expected_packet_size_);
-
                     state_ = ParseState::STATE_DATA;
                     break;
 
