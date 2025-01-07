@@ -40,5 +40,5 @@ async def to_code(config):
     if CONF_PACKET_TEXT_SENSOR_ID in config:
         conf = config[CONF_PACKET_TEXT_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await cg.register_component(sens, conf)
+        await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_packet_text_sensor(sens))
