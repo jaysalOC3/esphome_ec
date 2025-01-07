@@ -150,10 +150,11 @@ namespace esphome
             switch (cmd)
             {
             case 0x80:
-                if (data_[3] == 0x03){
+                if (data_[3] == 0x03)
+                {
                     ESP_LOGD(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
+                    process_presence_data(payload);
                 }
-                //process_presence_data(payload); // Now just stores the packet
                 break;
             case 0x85:
                 process_engineering_data(payload);
@@ -166,26 +167,14 @@ namespace esphome
 
         void MMWaveComponent::process_presence_data(const std::vector<uint8_t> &payload)
         {
-            ESP_LOGD(TAG, "Storing presence data packet");
-            std::stringstream ss;
-            ss << "Raw Packet(s) (Cmd 0x80):";
-            for (uint8_t byte : data_) {
-                ss << " " << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(byte);
-            }
-            std::string packet_string = ss.str();
+            ESP_LOGD(TAG, "Processing presence data packets");
 
-            received_packets_.push_front(packet_string);
-            if (received_packets_.size() > num_packets_to_store_) {
-                received_packets_.pop_back();
+            if (packet_text_sensor_ != nullptr)
+            {
+                packet_text_sensor_->publish_state(std::to_string(data_[6]));
             }
-
-            if (packet_text_sensor_ != nullptr) {
-                std::stringstream combined_packets;
-                for (const auto& packet : received_packets_) {
-                    combined_packets << packet << "\n";
-                }
-                packet_text_sensor_->publish_state(combined_packets.str());
-            } else {
+            else
+            {
                 ESP_LOGW(TAG, "Packet text sensor not initialized yet!");
             }
         }
@@ -200,7 +189,8 @@ namespace esphome
         {
             ESP_LOGCONFIG(TAG, "MMWave Component:");
             ESP_LOGCONFIG(TAG, "  UART configured");
-            if (packet_text_sensor_ != nullptr) {
+            if (packet_text_sensor_ != nullptr)
+            {
                 LOG_TEXT_SENSOR("  ", "Packet Text Sensor", packet_text_sensor_);
             }
         }
