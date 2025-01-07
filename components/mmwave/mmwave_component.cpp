@@ -1,6 +1,9 @@
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 #include "mmwave_component.h"
+#include "esphome/components/text_sensor/text_sensor.h" // Include for text_sensor
+#include <sstream>
+#include <iomanip>
 
 namespace esphome
 {
@@ -16,7 +19,7 @@ namespace esphome
 
         void MMWaveComponent::setup()
         {
-            ESP_LOGD(TAG, "Setting up MMWave component...");
+            ESP_LOGV(TAG, "Setting up MMWave component...");
 
             // Configure UART buffer size if needed
             // this->uart_->set_rx_buffer_size(64);  // Uncomment and adjust if needed
@@ -45,6 +48,10 @@ namespace esphome
 
             while (this->available())
             {
+                uint8_t c = this->read();
+                ESP_LOGV(TAG, "Received byte: 0x%02X", c); // Log every received byte
+                last_byte_time_ = millis();
+
                 if (data_.size() >= MAX_PACKET_SIZE)
                 {
                     ESP_LOGW(TAG, "Buffer overflow, resetting parser");
@@ -52,9 +59,6 @@ namespace esphome
                     state_ = ParseState::STATE_HEADER_START;
                     return;
                 }
-
-                uint8_t c = this->read();
-                last_byte_time_ = millis();
 
                 switch (state_)
                 {
@@ -72,7 +76,7 @@ namespace esphome
                     { // 'Y'
                         data_.push_back(c);
                         state_ = ParseState::STATE_CONFIG;
-                        ESP_LOGD(TAG, "Header found");
+                        ESP_LOGV(TAG, "Header found");
                     }
                     else
                     {
@@ -133,20 +137,20 @@ namespace esphome
         void MMWaveComponent::process_packet()
         {
             uint16_t data_length = (data_[4] << 8) | data_[5]; // Corrected Indexing
-            ESP_LOGD(TAG, "Data length from packet: %d bytes", data_length);
+            ESP_LOGV(TAG, "Data length from packet: %d bytes", data_length);
 
             uint8_t cmd = data_[2];
+            ESP_LOGV(TAG, "Command received: 0x%02X", cmd); // Log the command
+
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
             size_t payload_size = data_length;
             std::vector<uint8_t> payload(payload_start, payload_start + payload_size);
 
-            ESP_LOGW(TAG, "Command received: 0x%02X", cmd);
-
             switch (cmd)
             {
             case 0x80:
-                process_presence_data(payload);
+                process_presence_data(payload); // Now just stores the packet
                 break;
             case 0x85:
                 process_engineering_data(payload);
@@ -159,11 +163,27 @@ namespace esphome
 
         void MMWaveComponent::process_presence_data(const std::vector<uint8_t> &payload)
         {
-            ESP_LOGD(TAG, "Processing presence data");
-            // Add specific processing for presence detection data
-            for (size_t i = 0; i < payload.size(); i++)
-            {
-                ESP_LOGD(TAG, "Payload byte %d: 0x%02X", i, payload[i]);
+            ESP_LOGD(TAG, "Storing presence data packet");
+            std::stringstream ss;
+            ss << "Raw Packet (Cmd 0x80):";
+            for (uint8_t byte : data_) {
+                ss << " " << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(byte);
+            }
+            std::string packet_string = ss.str();
+
+            received_packets_.push_front(packet_string);
+            if (received_packets_.size() > num_packets_to_store_) {
+                received_packets_.pop_back();
+            }
+
+            if (packet_text_sensor_ != nullptr) {
+                std::stringstream combined_packets;
+                for (const auto& packet : received_packets_) {
+                    combined_packets << packet << "\n";
+                }
+                packet_text_sensor_->publish_state(combined_packets.str());
+            } else {
+                ESP_LOGW(TAG, "Packet text sensor not initialized yet!");
             }
         }
 
@@ -177,6 +197,9 @@ namespace esphome
         {
             ESP_LOGCONFIG(TAG, "MMWave Component:");
             ESP_LOGCONFIG(TAG, "  UART configured");
+            if (packet_text_sensor_ != nullptr) {
+                LOG_TEXT_SENSOR("  ", "Packet Text Sensor", packet_text_sensor_);
+            }
         }
 
     } // namespace mmwave_ns

@@ -2,7 +2,9 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
+#include "esphome/components/text_sensor/text_sensor.h" // Include for text_sensor
 #include <vector>
+#include <deque> // For storing multiple packets
 
 namespace esphome
 {
@@ -17,9 +19,12 @@ namespace esphome
             void loop() override;
             void dump_config() override;
 
+            void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
+            void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
+
         private:
             void process_packet();
-            void process_presence_data(const std::vector<uint8_t>& payload);
+            void process_presence_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t>& payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
@@ -46,6 +51,10 @@ namespace esphome
             ParseState state_{STATE_HEADER_START};
             std::vector<uint8_t> data_;
             uint16_t data_length_{0};
+
+            text_sensor::TextSensor *packet_text_sensor_{nullptr}; // Add text_sensor member
+            std::deque<std::string> received_packets_;
+            int num_packets_to_store_{5}; // Default to storing 5 packets
         };
     } // namespace mmwave_ns
 } // namespace esphome
