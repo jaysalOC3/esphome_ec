@@ -217,6 +217,9 @@ namespace esphome
             uint8_t cmdBuf[8] = {0x53, 0x59, 0x80, 0x0A, 0x00, 0x00, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            
         }
 
         void MMWaveComponent::send_sleep_mode_command()
