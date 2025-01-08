@@ -2,7 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
-#include "esphome/components/text_sensor/text_sensor.h" // Include for text_sensor
+#include "esphome/components/text_sensor/text_sensor.h"
 #include <vector>
 #include <deque> // For storing multiple packets
 
@@ -19,8 +19,11 @@ namespace esphome
             void loop() override;
             void dump_config() override;
 
+            void send_command();
+
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
+
             void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
 
         private:
@@ -56,6 +59,7 @@ namespace esphome
 
             text_sensor::TextSensor *packet_text_sensor_{nullptr}; // Add text_sensor member
             text_sensor::TextSensor *movement_sensor_{nullptr};
+
             std::deque<std::string> received_packets_;
             int num_packets_to_store_{5}; // Default to storing 5 packets
         };

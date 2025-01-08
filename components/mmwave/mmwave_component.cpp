@@ -1,7 +1,7 @@
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 #include "mmwave_component.h"
-#include "esphome/components/text_sensor/text_sensor.h" // Include for text_sensor
+#include "esphome/components/text_sensor/text_sensor.h"
 #include <sstream>
 #include <iomanip>
 
@@ -23,6 +23,12 @@ namespace esphome
 
             // Configure UART buffer size if needed
             // this->uart_->set_rx_buffer_size(64);  // Uncomment and adjust if needed
+
+            // if (control_button_ != nullptr)
+            // {
+            //     control_button_->add_on_press_callback([this]()
+            //                                            { ESP_LOGI(TAG, "Button clicked!"); });
+            // }
         }
 
         void MMWaveComponent::loop()
@@ -196,6 +202,11 @@ namespace esphome
         {
             ESP_LOGD(TAG, "Processing engineering data");
             // Add specific processing for engineering mode data
+        }
+
+        void MMWaveComponent::send_command()
+        {
+            ESP_LOGI(TAG, "Send Command!");
         }
 
         void MMWaveComponent::dump_config()

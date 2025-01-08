@@ -51,4 +51,19 @@ uart:
 mmwave:
   id: mmwave_component
   uart_id: uart_bus
+  packet_text_sensor_id:
+    id: mmwave_packets_text_sensor
+    name: "MMWave Packets"
+  movement_sensor_id:
+    id: mmwave_movement_sensor
+    name: "Movement Rate"
   
+button:
+  - platform: template
+    name: "MMWave Control"
+    id: mmwave_control_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command();
+
