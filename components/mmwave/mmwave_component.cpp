@@ -49,11 +49,14 @@ namespace esphome
         {
             static const uint8_t MAX_PACKET_SIZE = 16;
             static const uint8_t HEADER_SIZE = 6; // SY + Config + Command + Length(2)
+            uint8_t cfg = 0;
+            uint8_t cmd = 0;
 
             while (this->available())
             {
                 uint8_t c = this->read();
-                ESP_LOGVV(TAG, "Received byte: 0x%02X", c); // Log every received byte
+
+                // ESP_LOGVV(TAG, "Received byte: 0x%02X", c); // Log every received byte
                 last_byte_time_ = millis();
 
                 if (data_.size() >= MAX_PACKET_SIZE)
@@ -90,11 +93,13 @@ namespace esphome
 
                 case ParseState::STATE_CONFIG:
                     data_.push_back(c);
+                    cfg = c;
                     state_ = ParseState::STATE_COMMAND;
                     break;
 
                 case ParseState::STATE_COMMAND:
                     data_.push_back(c);
+                    cmd = c;
                     state_ = ParseState::STATE_LENGTH_H;
                     break;
 
@@ -129,15 +134,16 @@ namespace esphome
                     // Check if we have received all expected bytes
                     if (data_.size() == expected_packet_size_)
                     {
-                        ESP_LOGV(TAG, "Received complete packet of %d bytes", data_.size());
+                        ESP_LOGVV(TAG, "Received complete packet of %d bytes", data_.size());
 
                         std::stringstream ss;
-                        ss << "Data: ";
+                        ss << "cgf: " << static_cast<int>(cfg) << " ";
+                        ss << "cmd: " << static_cast<int>(cmd) << " ";
                         for (size_t i = 0; i < data_.size(); ++i)
                         {
                             ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
                         }
-                        ESP_LOGD(TAG, "%s", ss.str().c_str());
+                        ESP_LOGVV(TAG, "%s", ss.str().c_str());
                         packet_text_sensor_->publish_state(ss.str().c_str());
 
                         process_packet();
@@ -152,10 +158,10 @@ namespace esphome
         void MMWaveComponent::process_packet()
         {
             uint16_t data_length = (data_[4] << 8) | data_[5];
-            ESP_LOGVV(TAG, "Data length from packet: %d bytes", data_length);
+            // ESP_LOGVV(TAG, "Data length from packet: %d bytes", data_length);
 
             uint8_t cmd = data_[2];
-            ESP_LOGVV(TAG, "Command: 0x%02X, Instruction: 0x%02X packets", cmd, data_[3]);
+            // ESP_LOGVV(TAG, "Command: 0x%02X, Instruction: 0x%02X packets", cmd, data_[3]);
 
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
