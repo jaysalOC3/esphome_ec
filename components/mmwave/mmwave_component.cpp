@@ -136,16 +136,6 @@ namespace esphome
                     {
                         ESP_LOGVV(TAG, "Received complete packet of %d bytes", data_.size());
 
-                        std::stringstream ss;
-                        ss << "cgf: " << static_cast<int>(cfg) << " ";
-                        ss << "cmd: " << static_cast<int>(cmd) << " ";
-                        for (size_t i = 0; i < data_.size(); ++i)
-                        {
-                            ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
-                        }
-                        ESP_LOGVV(TAG, "%s", ss.str().c_str());
-                        packet_text_sensor_->publish_state(ss.str().c_str());
-
                         process_packet();
                         state_ = ParseState::STATE_HEADER_START;
                         return;
@@ -182,6 +172,16 @@ namespace esphome
                 break;
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
+                std::stringstream ss;
+                ss << "cgf: " << std::hex << static_cast<int>(data_[2]) << " ";
+                ss << "cmd: " << std::hex << static_cast<int>(data_[3]) << " ";
+                for (size_t i = 0; i < data_.size(); ++i)
+                {
+                    ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
+                }
+                ESP_LOGVV(TAG, "%s", ss.str().c_str());
+                packet_text_sensor_->publish_state(ss.str().c_str());
+
                 break;
             }
         }
