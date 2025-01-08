@@ -53,7 +53,7 @@ namespace esphome
             while (this->available())
             {
                 uint8_t c = this->read();
-                ESP_LOGV(TAG, "Received byte: 0x%02X", c); // Log every received byte
+                ESP_LOGVV(TAG, "Received byte: 0x%02X", c); // Log every received byte
                 last_byte_time_ = millis();
 
                 if (data_.size() >= MAX_PACKET_SIZE)
@@ -145,7 +145,7 @@ namespace esphome
             ESP_LOGVV(TAG, "Data length from packet: %d bytes", data_length);
 
             uint8_t cmd = data_[2];
-            ESP_LOGVV(TAG, "Command received: 0x%02X", cmd);
+            ESP_LOGVV(TAG, "Command: 0x%02X, Instruction: 0x%02X packets", cmd, data_[3]);
 
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
@@ -206,7 +206,7 @@ namespace esphome
 
         void MMWaveComponent::send_command()
         {
-            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0x08, 0x00, 0x01, 0x00, 0x00, 0x54, 0x43};
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x00");
         }
