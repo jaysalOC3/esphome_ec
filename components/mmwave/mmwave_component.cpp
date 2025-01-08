@@ -206,7 +206,9 @@ namespace esphome
 
         void MMWaveComponent::send_command()
         {
-            ESP_LOGI(TAG, "Send Command!");
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0x08, 0x00, 0x01, 0x00, 0x00, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            ESP_LOGI(TAG, "Sent command: ");
         }
 
         void MMWaveComponent::dump_config()
