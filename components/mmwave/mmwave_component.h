@@ -30,7 +30,7 @@ namespace esphome
             void process_engineering_data(const std::vector<uint8_t>& payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
-            static const uint32_t PACKET_TIMEOUT_MS = 100; // Timeout in milliseconds
+            static const uint32_t PACKET_TIMEOUT_MS = 25; // Timeout in milliseconds
             uint32_t last_byte_time_{0};
             uint16_t total_expected_bytes_{0};
             uint16_t bytes_remaining_{0};
