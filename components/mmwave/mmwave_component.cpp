@@ -142,10 +142,10 @@ namespace esphome
         void MMWaveComponent::process_packet()
         {
             uint16_t data_length = (data_[4] << 8) | data_[5];
-            ESP_LOGV(TAG, "Data length from packet: %d bytes", data_length);
+            ESP_LOGVV(TAG, "Data length from packet: %d bytes", data_length);
 
             uint8_t cmd = data_[2];
-            ESP_LOGV(TAG, "Command received: 0x%02X", cmd);
+            ESP_LOGVV(TAG, "Command received: 0x%02X", cmd);
 
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
@@ -157,7 +157,7 @@ namespace esphome
             case 0x80:
                 if (data_[3] == 0x03)
                 {
-                    ESP_LOGD(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
+                    ESP_LOGVV(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
                     process_movement_data(payload);
                 }
                 break;
@@ -172,7 +172,7 @@ namespace esphome
 
         void MMWaveComponent::process_presence_data(const std::vector<uint8_t> &payload)
         {
-            ESP_LOGD(TAG, "Processing presence data packets");
+            ESP_LOGV(TAG, "Processing presence data packets");
 
             if (packet_text_sensor_ != nullptr)
             {
@@ -186,7 +186,7 @@ namespace esphome
 
         void MMWaveComponent::process_movement_data(const std::vector<uint8_t> &payload)
         {
-            ESP_LOGD(TAG, "Processing movement data packets");
+            ESP_LOGV(TAG, "Processing movement data packets");
 
             if (movement_sensor_ != nullptr)
             {
@@ -200,7 +200,7 @@ namespace esphome
 
         void MMWaveComponent::process_engineering_data(const std::vector<uint8_t> &payload)
         {
-            ESP_LOGD(TAG, "Processing engineering data");
+            ESP_LOGV(TAG, "Processing engineering data");
             // Add specific processing for engineering mode data
         }
 
@@ -208,7 +208,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0x08, 0x00, 0x01, 0x00, 0x00, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            ESP_LOGI(TAG, "Sent command: ");
+            ESP_LOGV(TAG, "Sent command: ");
         }
 
         void MMWaveComponent::dump_config()
