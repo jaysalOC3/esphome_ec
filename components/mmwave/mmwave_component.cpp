@@ -130,6 +130,16 @@ namespace esphome
                     if (data_.size() == expected_packet_size_)
                     {
                         ESP_LOGV(TAG, "Received complete packet of %d bytes", data_.size());
+
+                        std::stringstream ss;
+                        ss << "Data: ";
+                        for (size_t i = 0; i < data_.size(); ++i)
+                        {
+                            ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
+                        }
+                        ESP_LOGD(TAG, "%s", ss.str().c_str());
+                        packet_text_sensor_->publish_state(ss.str().c_str());
+
                         process_packet();
                         state_ = ParseState::STATE_HEADER_START;
                         return;
@@ -220,7 +230,6 @@ namespace esphome
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
             delay(50);
-            
         }
 
         void MMWaveComponent::send_sleep_mode_command()
@@ -237,7 +246,6 @@ namespace esphome
             uint8_t cmdBufSleep[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x03, 0xAF, 0x54, 0x43};
             this->write_array(cmdBufSleep, sizeof(cmdBufSleep));
             ESP_LOGI(TAG, "Sent sleep command.");
-
         }
 
         void MMWaveComponent::dump_config()
