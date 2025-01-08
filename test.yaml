@@ -60,12 +60,12 @@ mmwave:
   
 button:
   - platform: template
-    name: "MMWave Control"
+    name: "MMWave Get Work Mode"
     id: mmwave_control_btn 
     on_press: 
       then:
         - lambda: |-
-            id(mmwave_component).send_command();
+            id(mmwave_component).get_work_mode();
 
   - platform: template
     name: "Send Sleep Command"

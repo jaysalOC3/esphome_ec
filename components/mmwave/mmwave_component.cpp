@@ -211,6 +211,13 @@ namespace esphome
             ESP_LOGV(TAG, "Sent command: 0x00");
         }
 
+        void MMWaveComponent::get_work_mode()
+        {
+            uint8_t cmdBuf[8] = {0x53, 0x59, 0x80, 0x0A, 0x00, 0x00, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
+        }
+
         void MMWaveComponent::send_sleep_mode_command()
         {
             // Sleep Configuration Command
