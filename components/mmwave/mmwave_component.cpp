@@ -126,6 +126,7 @@ namespace esphome
                         ESP_LOGV(TAG, "Received complete packet of %d bytes", data_.size());
                         process_packet();
                         state_ = ParseState::STATE_HEADER_START;
+                        return;
                     }
                     break;
                 }
