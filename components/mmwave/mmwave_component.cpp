@@ -37,8 +37,6 @@ namespace esphome
                 data_.clear();
                 state_ = ParseState::STATE_HEADER_START;
             }
-
-            delay(10); // Reduced from continuous polling to prevent watchdog issues
         }
 
         void MMWaveComponent::handle_uart_data()
