@@ -153,7 +153,7 @@ namespace esphome
                 if (data_[3] == 0x03)
                 {
                     ESP_LOGD(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
-                    process_presence_data(payload);
+                    process_movement_data(payload);
                 }
                 break;
             case 0x85:
@@ -176,6 +176,20 @@ namespace esphome
             else
             {
                 ESP_LOGW(TAG, "Packet text sensor not initialized yet!");
+            }
+        }
+
+        void MMWaveComponent::process_movement_data(const std::vector<uint8_t> &payload)
+        {
+            ESP_LOGD(TAG, "Processing movement data packets");
+
+            if (movement_sensor_ != nullptr)
+            {
+                movement_sensor_->publish_state(std::to_string(data_[6]));
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Movement sensor not initialized yet!");
             }
         }
 

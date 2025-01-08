@@ -25,6 +25,7 @@ namespace esphome
         private:
             void process_packet();
             void process_presence_data(const std::vector<uint8_t>& payload); // Will now just store the packet
+            void process_movement_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t>& payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
@@ -53,6 +54,7 @@ namespace esphome
             uint16_t data_length_{0};
 
             text_sensor::TextSensor *packet_text_sensor_{nullptr}; // Add text_sensor member
+            text_sensor::TextSensor *movement_sensor_{nullptr};
             std::deque<std::string> received_packets_;
             int num_packets_to_store_{5}; // Default to storing 5 packets
         };
