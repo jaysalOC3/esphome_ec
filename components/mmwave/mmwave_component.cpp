@@ -219,6 +219,7 @@ namespace esphome
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
+            delay(50);
             
         }
 
