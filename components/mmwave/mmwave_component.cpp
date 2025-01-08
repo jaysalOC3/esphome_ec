@@ -208,7 +208,24 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0x08, 0x00, 0x01, 0x00, 0x00, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            ESP_LOGV(TAG, "Sent command: ");
+            ESP_LOGV(TAG, "Sent command: 0x00");
+        }
+
+        void MMWaveComponent::send_sleep_mode_command()
+        {
+            // Sleep Configuration Command
+            uint8_t cmdBufSleepConfig[10] = {0x53, 0x59, 0x02, 0x08, 0x00, 0x01, 0x03, 0x0F, 0x54, 0x43};
+            this->write_array(cmdBufSleepConfig, sizeof(cmdBufSleepConfig));
+            ESP_LOGI(TAG, "Sent sleep config command. Will delay");
+
+            // You might need a delay here, depending on the sensor's response time
+            delay(100); // Adjust delay as needed
+
+            // Sleep Command
+            uint8_t cmdBufSleep[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x03, 0xAF, 0x54, 0x43};
+            this->write_array(cmdBufSleep, sizeof(cmdBufSleep));
+            ESP_LOGI(TAG, "Sent sleep command.");
+
         }
 
         void MMWaveComponent::dump_config()

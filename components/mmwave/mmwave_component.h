@@ -20,6 +20,7 @@ namespace esphome
             void dump_config() override;
 
             void send_command();
+            void send_sleep_mode_command();
 
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }

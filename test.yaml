@@ -67,3 +67,11 @@ button:
         - lambda: |-
             id(mmwave_component).send_command();
 
+  - platform: template
+    name: "Send Sleep Command"
+    id: sleep_command_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_sleep_mode_command();
+
