@@ -169,7 +169,7 @@ namespace esphome
                 break;
             case 0x81:
                 ESP_LOGVV(TAG, "Command 81 and Instruction data avalible.", cmd);
-                
+                process_position_data(payload);
                 break;
             case 0x85:
                 process_engineering_data(payload);
