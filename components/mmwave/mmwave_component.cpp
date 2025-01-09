@@ -173,8 +173,8 @@ namespace esphome
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
                 std::stringstream ss;
-                ss << "cgf: " << std::hex << static_cast<int>(data_[2]) << " ";
-                ss << "cmd: " << std::hex << static_cast<int>(data_[3]) << " ";
+                ss << "cfg: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[2]) << " ";
+                ss << "cmd: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[3]) << " ";
                 for (size_t i = 0; i < data_.size(); ++i)
                 {
                     ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
