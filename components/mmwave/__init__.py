@@ -68,7 +68,7 @@ async def to_code(config):
         conf = config[CONF_CONFIG_TEXT_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
         await text_sensor.register_text_sensor(sens, conf)
-        cg.add(var.set_packet_text_sensor(sens))
+        cg.add(var.set_config_text_sensor(sens))
 
     if CONF_MOVEMENT_SENSOR_ID in config:
         conf = config[CONF_MOVEMENT_SENSOR_ID]
