@@ -167,6 +167,10 @@ namespace esphome
                     process_movement_data(payload);
                 }
                 break;
+            case 0x81:
+                ESP_LOGVV(TAG, "Command 81 and Instruction data avalible.", cmd);
+                
+                break;
             case 0x85:
                 process_engineering_data(payload);
                 break;
@@ -204,6 +208,20 @@ namespace esphome
             else
             {
                 ESP_LOGW(TAG, "Packet text sensor not initialized yet!");
+            }
+        }
+
+        void MMWaveComponent::process_position_data(const std::vector<uint8_t> &payload)
+        {
+            ESP_LOGV(TAG, "Processing position data packets");
+
+            if (position_text_sensor_ != nullptr)
+            {
+                position_text_sensor_->publish_state(std::to_string(data_[6]));
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Position sensor not initialized yet!");
             }
         }
 

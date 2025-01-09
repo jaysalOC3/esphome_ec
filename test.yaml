@@ -57,6 +57,9 @@ mmwave:
   config_text_sensor_id:
     id: mmwave_config_text_sensor
     name: "Config Packets"
+  position_text_sensor_id:
+    id: mmwave_position_text_sensor
+    name: "Position Packets"
   movement_sensor_id:
     id: mmwave_movement_sensor
     name: "Movement Rate"

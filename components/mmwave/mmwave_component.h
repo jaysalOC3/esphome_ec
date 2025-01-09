@@ -26,6 +26,7 @@ namespace esphome
 
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_config_text_sensor(text_sensor::TextSensor *config_sensor) { config_text_sensor_ = config_sensor; }
+            void set_position_sensor(text_sensor::TextSensor *position_sensor) { position_text_sensor_ = position_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
             void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
@@ -34,6 +35,7 @@ namespace esphome
             void process_packet();
             void process_presence_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_movement_data(const std::vector<uint8_t>& payload); // Will now just store the packet
+            void process_position_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t>& payload);
             void process_cfg_one_data(const std::vector<uint8_t> &payload);
             void handle_uart_data();
@@ -64,6 +66,7 @@ namespace esphome
 
             text_sensor::TextSensor *packet_text_sensor_{nullptr}; 
             text_sensor::TextSensor *config_text_sensor_{nullptr}; 
+            text_sensor::TextSensor *position_text_sensor_{nullptr}; 
             text_sensor::TextSensor *movement_sensor_{nullptr};
 
             std::deque<std::string> received_packets_;
