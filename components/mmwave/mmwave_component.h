@@ -47,6 +47,15 @@ namespace esphome
             uint16_t bytes_remaining_{0};
             uint16_t expected_packet_size_{0};
 
+            enum DeviceState
+            {
+                STATE_POWER_ON,
+                STATE_SENSOR_INIT,
+                STATE_SENSOR_CHG_MODE,
+                STATE_SENSOR_SLEEP_MODE,
+                STATE_SENSOR_ERROR,
+            };
+
             enum ParseState
             {
                 STATE_HEADER_START,
