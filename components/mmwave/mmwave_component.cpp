@@ -217,10 +217,14 @@ namespace esphome
 
             if (position_text_sensor_ != nullptr)
             {
-                position_text_sensor_->publish_state(std::to_string(data_[6]));
+                std::stringstream ss;
+                for (size_t i = 0; i < payload.size(); ++i)
+                {
+                    ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(payload[i]) << " ";
+                }
+                position_text_sensor_->publish_state(ss.str().c_str());
             }
             else
-            {
                 ESP_LOGW(TAG, "Position sensor not initialized yet!");
             }
         }
