@@ -219,12 +219,21 @@ namespace esphome
 
             if (position_text_sensor_ != nullptr)
             {
-                std::stringstream ss;
-                for (size_t i = 0; i < payload.size(); ++i)
-                {
-                    ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(payload[i]) << " ";
+                if (payload.size() >= 6)
+                { // Ensure enough data for X and Y
+
+                    // Assuming X is the first 3 bytes, Y is the next 3 bytes
+                    int32_t x = (payload[0] << 16) | (payload[1] << 8) | payload[2];
+                    int32_t y = (payload[3] << 16) | (payload[4] << 8) | payload[5];
+
+                    std::stringstream ss;
+                    ss << "X: " << x << ", Y: " << y;
+                    position_text_sensor_->publish_state(ss.str().c_str());
                 }
-                position_text_sensor_->publish_state(ss.str().c_str());
+                else
+                {
+                    ESP_LOGW(TAG, "Insufficient data for X,Y coordinates");
+                }
             }
             else
             {
