@@ -170,6 +170,13 @@ namespace esphome
             case 0x85:
                 process_engineering_data(payload);
                 break;
+            case 0x01:
+                if (data_[3] == 0x03)
+                {
+                    ESP_LOGVV(TAG, "Command 1 and Instruction 1 data avalible.", cmd);
+                    process_cfg_one_data(payload);
+                }
+                break;
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
                 std::stringstream ss;
@@ -218,6 +225,24 @@ namespace esphome
         {
             ESP_LOGV(TAG, "Processing engineering data");
             // Add specific processing for engineering mode data
+        }
+
+        void MMWaveComponent::process_cfg_one_data(const std::vector<uint8_t> &payload)
+        {
+            ESP_LOGV(TAG, "Processing Config Work Mode");
+            if (config_text_sensor_ != nullptr)
+            {
+                std::stringstream ss;
+                for (size_t i = 0; i < payload.size(); ++i)
+                {
+                    ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(payload[i]) << " ";
+                }
+                config_text_sensor_->publish_state(ss.str().c_str());
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Config text sensor not initialized yet!");
+            }
         }
 
         void MMWaveComponent::begin()
@@ -275,6 +300,10 @@ namespace esphome
             if (packet_text_sensor_ != nullptr)
             {
                 LOG_TEXT_SENSOR("  ", "Packet Text Sensor", packet_text_sensor_);
+            }
+            if (config_text_sensor_ != nullptr)
+            {
+                LOG_TEXT_SENSOR("  ", "Packet Text Sensor", config_text_sensor_);
             }
         }
 

@@ -53,7 +53,10 @@ mmwave:
   uart_id: uart_bus
   packet_text_sensor_id:
     id: mmwave_packets_text_sensor
-    name: "MMWave Packets"
+    name: "Unknown Packets"
+  config_text_sensor_id:
+    id: mmwave_config_text_sensor
+    name: "Config Packets"
   movement_sensor_id:
     id: mmwave_movement_sensor
     name: "Movement Rate"

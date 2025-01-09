@@ -11,6 +11,7 @@ MMWaveComponent = mmwave_component_ns.class_(
 )
 
 CONF_PACKET_TEXT_SENSOR_ID = "packet_text_sensor_id"
+CONF_CONFIG_TEXT_SENSOR_ID = "config_text_sensor_id"
 CONF_MOVEMENT_SENSOR_ID = "movement_sensor_id"
 CONF_HUMAN_PRESENCE_SENSOR_ID = "human_presence_sensor_id"
 CONF_NUM_PACKETS = "num_packets"
@@ -20,6 +21,12 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(MMWaveComponent),
             cv.Optional(CONF_PACKET_TEXT_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
+                {
+                    cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
+                    cv.Optional(CONF_NAME): cv.string,
+                }
+            ),
+            cv.Optional(CONF_CONFIG_TEXT_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
                 {
                     cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
                     cv.Optional(CONF_NAME): cv.string,
@@ -53,6 +60,12 @@ async def to_code(config):
 
     if CONF_PACKET_TEXT_SENSOR_ID in config:
         conf = config[CONF_PACKET_TEXT_SENSOR_ID]
+        sens = cg.new_Pvariable(conf[CONF_ID])
+        await text_sensor.register_text_sensor(sens, conf)
+        cg.add(var.set_packet_text_sensor(sens))
+
+    if CONF_CONFIG_TEXT_SENSOR_ID in config:
+        conf = config[CONF_CONFIG_TEXT_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_packet_text_sensor(sens))

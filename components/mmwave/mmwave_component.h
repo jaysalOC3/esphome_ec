@@ -25,6 +25,7 @@ namespace esphome
             void send_sleep_mode_command();
 
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
+            void set_config_text_sensor(text_sensor::TextSensor *config_sensor) { config_text_sensor_ = config_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
             void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
@@ -34,6 +35,7 @@ namespace esphome
             void process_presence_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_movement_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t>& payload);
+            void process_cfg_one_data(const std::vector<uint8_t> &payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
             static const uint32_t PACKET_TIMEOUT_MS = 25; // Timeout in milliseconds
@@ -60,7 +62,8 @@ namespace esphome
             std::vector<uint8_t> data_;
             uint16_t data_length_{0};
 
-            text_sensor::TextSensor *packet_text_sensor_{nullptr}; // Add text_sensor member
+            text_sensor::TextSensor *packet_text_sensor_{nullptr}; 
+            text_sensor::TextSensor *config_text_sensor_{nullptr}; 
             text_sensor::TextSensor *movement_sensor_{nullptr};
 
             std::deque<std::string> received_packets_;
