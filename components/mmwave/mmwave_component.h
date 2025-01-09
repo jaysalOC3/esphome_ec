@@ -22,6 +22,7 @@ namespace esphome
             void begin();
             void send_command();
             void get_work_mode();
+            void sensor_restart();
             void send_sleep_mode_command();
 
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }

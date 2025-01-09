@@ -82,6 +82,14 @@ button:
             id(mmwave_component).get_work_mode();
 
   - platform: template
+    name: "Sensor Restart"
+    id: mmwave_sensor_restart_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).sensor_restart();
+
+  - platform: template
     name: "Send Sleep Command"
     id: sleep_command_btn 
     on_press: 

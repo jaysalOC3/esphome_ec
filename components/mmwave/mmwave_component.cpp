@@ -300,6 +300,16 @@ namespace esphome
             delay(50);
         }
 
+        void MMWaveComponent::sensor_restart()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x02, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
         void MMWaveComponent::send_sleep_mode_command()
         {
             // Sleep Configuration Command
