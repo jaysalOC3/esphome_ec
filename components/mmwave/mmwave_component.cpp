@@ -225,6 +225,7 @@ namespace esphome
                 position_text_sensor_->publish_state(ss.str().c_str());
             }
             else
+            {
                 ESP_LOGW(TAG, "Position sensor not initialized yet!");
             }
         }
