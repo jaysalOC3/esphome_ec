@@ -174,12 +174,9 @@ namespace esphome
             case 0x85:
                 process_engineering_data(payload);
                 break;
-            case 0x01:
-                if (data_[3] == 0x03)
-                {
-                    ESP_LOGVV(TAG, "Command 1 and Instruction 1 data avalible.", cmd);
-                    process_cfg_one_data(payload);
-                }
+            case 0x02:
+                ESP_LOGVV(TAG, "Command 2 and Instruction data avalible.", cmd);
+                process_cfg_one_data(payload);
                 break;
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
@@ -292,7 +289,7 @@ namespace esphome
 
         void MMWaveComponent::get_work_mode()
         {
-            uint8_t cmdBuf[8] = {0x53, 0x59, 0x80, 0x0A, 0x00, 0x00, 0x54, 0x43};
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
             data_.clear();
@@ -302,7 +299,7 @@ namespace esphome
 
         void MMWaveComponent::sensor_restart()
         {
-            uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x02, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
             data_.clear();
