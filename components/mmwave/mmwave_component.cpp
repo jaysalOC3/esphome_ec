@@ -220,12 +220,26 @@ namespace esphome
             // Add specific processing for engineering mode data
         }
 
+        void MMWaveComponent::begin()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x83, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent Begin: 0x0f");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
         void MMWaveComponent::send_command()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x00");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
         }
 
         void MMWaveComponent::get_work_mode()

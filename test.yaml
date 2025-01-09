@@ -60,6 +60,14 @@ mmwave:
   
 button:
   - platform: template
+    name: "MMWave Begin"
+    id: mmwave_begin_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).begin();
+
+  - platform: template
     name: "MMWave Get Work Mode"
     id: mmwave_control_btn 
     on_press: 

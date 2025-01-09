@@ -19,6 +19,7 @@ namespace esphome
             void loop() override;
             void dump_config() override;
 
+            void begin();
             void send_command();
             void get_work_mode();
             void send_sleep_mode_command();
