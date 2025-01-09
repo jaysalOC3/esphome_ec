@@ -169,15 +169,7 @@ namespace esphome
                 if (data_[3] == 0x05)
                 {
                     ESP_LOGVV(TAG, "Command 80 and Instruction 05 data avalible.", cmd);
-                    std::stringstream ss;
-                    ss << "cfg: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[2]) << " ";
-                    ss << "cmd: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[3]) << " ";
-                    for (size_t i = 0; i < data_.size(); ++i)
-                    {
-                        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data_[i]) << " ";
-                    }
-                    ESP_LOGVV(TAG, "%s", ss.str().c_str());
-                    packet_text_sensor_->publish_state(ss.str().c_str());
+                    process_position_data(payload);
                 }
                 break;
             case 0x81:
