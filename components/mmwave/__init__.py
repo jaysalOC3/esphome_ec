@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import uart, text_sensor, binary_sensor, button, number, sensor
 from esphome.const import CONF_ID, CONF_NAME, CONF_ON_PRESS
 
-DEPENDENCIES = ["uart"]
+DEPENDENCIES = ["uart", "text_sensor", "binary_sensor", "button", "number", "sensor"]
 
 mmwave_component_ns = cg.esphome_ns.namespace("mmwave_ns")
 MMWaveComponent = mmwave_component_ns.class_(
