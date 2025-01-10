@@ -3,7 +3,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/text_sensor/text_sensor.h"
-#include "esphome/components/number/number.h"
+#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include <vector>
 #include <deque> // For storing multiple packets
@@ -12,17 +12,6 @@ namespace esphome
 {
     namespace mmwave_ns
     {
-        class MMWaveNumber : public number::Number
-        {
-        public:
-            void control(float value) override
-            {
-                // This function is called when the number value is changed from Home Assistant
-                // For most sensor values, we don't need to do anything here since they're read-only
-                this->publish_state(value);
-            }
-        };
-
         class MMWaveComponent : public Component, public uart::UARTDevice
         {
         public:
@@ -44,13 +33,13 @@ namespace esphome
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
             void set_presence_sensor(binary_sensor::BinarySensor *presence_sensor) { presence_sensor_ = presence_sensor; }
-            void set_sleep_state_sensor(MMWaveNumber *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
-            void set_average_respiration_sensor(MMWaveNumber *average_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
-            void set_average_heartbeat_sensor(MMWaveNumber *average_heartbeat_sensor) { average_heartbeat_sensor_ = average_heartbeat_sensor; }
-            void set_turnover_sensor(MMWaveNumber *turnover_sensor) { turnover_sensor_ = turnover_sensor; }
-            void set_large_bodymove_sensor(MMWaveNumber *large_bodymove_sensor) { large_bodymove_sensor_ = large_bodymove_sensor; }
-            void set_minor_bodymove_sensor(MMWaveNumber *minor_bodymove_sensor) { minor_bodymove_sensor_ = minor_bodymove_sensor; }
-            void set_apnea_events_sensor(MMWaveNumber *apnea_events_sensor) { apnea_events_sensor_ = apnea_events_sensor; }
+            void set_sleep_state_sensor(sensor::Sensor *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
+            void set_average_respiration_sensor(sensor::Sensor *average_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
+            void set_average_heartbeat_sensor(sensor::Sensor *average_heartbeat_sensor) { average_heartbeat_sensor_ = average_heartbeat_sensor; }
+            void set_turnover_sensor(sensor::Sensor *turnover_sensor) { turnover_sensor_ = turnover_sensor; }
+            void set_large_bodymove_sensor(sensor::Sensor *large_bodymove_sensor) { large_bodymove_sensor_ = large_bodymove_sensor; }
+            void set_minor_bodymove_sensor(sensor::Sensor *minor_bodymove_sensor) { minor_bodymove_sensor_ = minor_bodymove_sensor; }
+            void set_apnea_events_sensor(sensor::Sensor *apnea_events_sensor) { apnea_events_sensor_ = apnea_events_sensor; }
 
             void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
 
@@ -106,13 +95,13 @@ namespace esphome
             text_sensor::TextSensor *movement_sensor_{nullptr};
 
             binary_sensor::BinarySensor *presence_sensor_{nullptr};
-            MMWaveNumber *sleep_state_sensor_{nullptr};
-            MMWaveNumber *average_respiration_sensor_{nullptr};
-            MMWaveNumber *average_heartbeat_sensor_{nullptr};
-            MMWaveNumber *turnover_sensor_{nullptr};
-            MMWaveNumber *large_bodymove_sensor_{nullptr};
-            MMWaveNumber *minor_bodymove_sensor_{nullptr};
-            MMWaveNumber *apnea_events_sensor_{nullptr};
+            sensor::Sensor *sleep_state_sensor_{nullptr};
+            sensor::Sensor *average_respiration_sensor_{nullptr};
+            sensor::Sensor *average_heartbeat_sensor_{nullptr};
+            sensor::Sensor *turnover_sensor_{nullptr};
+            sensor::Sensor *large_bodymove_sensor_{nullptr};
+            sensor::Sensor *minor_bodymove_sensor_{nullptr};
+            sensor::Sensor *apnea_events_sensor_{nullptr};
 
             std::deque<std::string> received_packets_;
             int num_packets_to_store_{5}; // Default to storing 5 packets
