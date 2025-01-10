@@ -1,4 +1,124 @@
+esphome:
+  name: mmwave3
+  friendly_name: mmwave3
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+text_sensor:
+
 sensor:
-  - platform: "MMWaveComponent"
-    id: mmwave_sensor
-    uart_id: uart_bus
+
+binary_sensor:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "1EpoxpVwhtgP4qD9aY3Kd5oU8n7zeEu2nHBH/EFa5do="
+
+ota:
+  - platform: esphome
+    password: "cd956dd0b4435322ffd35f278b42a386"
+
+wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Mmwave3 Fallback Hotspot"
+    password: "uJ9kqXhYNoND"
+
+captive_portal:
+    
+external_components:
+  - source: components
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO21
+  rx_pin: GPIO20
+  baud_rate: 115200  
+
+mmwave:
+  id: mmwave_component
+  uart_id: uart_bus
+  packet_text_sensor_id:
+    id: mmwave_packets_text_sensor
+    name: "Unknown Packets"
+  config_text_sensor_id:
+    id: mmwave_config_text_sensor
+    name: "Config Packets"
+  position_text_sensor_id:
+    id: mmwave_position_text_sensor
+    name: "Position Packets"
+  movement_sensor_id:
+    id: mmwave_movement_sensor
+    name: "Movement Rate"
+  presence_sensor_id:
+    id: mmwave_presence_sensor
+    name: "Presence"
+  sleep_state_sensor_id:
+    id: mmwave_sleep_state_sensor
+    name: "Sleep State"
+  average_respiration_sensor_id:
+    id: mmwave_average_respiration_sensor
+    name: "Average Respiration"
+  average_heartbeat_sensor_id:
+    id: mmwave_average_heartbeat_sensor
+    name: "Average Heartbeat"
+  turnover_sensor_id:
+    id: mmwave_turnover_sensor
+    name: "Turnover"
+  large_bodymove_sensor_id:
+    id: mmwave_large_bodymove_sensor
+    name: "Large Body Movement"
+  minor_bodymove_sensor_id:
+    id: mmwave_minor_bodymove_sensor
+    name: "Minor Body Movement"
+  apnea_events_sensor_id:
+    id: mmwave_apnea_events_sensor
+    name: "Apnea Events"
+  
+button:
+  - platform: template
+    name: "MMWave Begin"
+    id: mmwave_begin_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).begin();
+
+  - platform: template
+    name: "MMWave Start Work Mode"
+    id: mmwave_control_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).start_work_mode();
+
+  - platform: template
+    name: "Sensor Restart"
+    id: mmwave_sensor_restart_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).sensor_restart();
+
+  - platform: template
+    name: "Set Sleep Mode"
+    id: sleep_command_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_sleep_mode_command();
+
+  - platform: template
+    name: "Get Sleep Composite"
+    id: sleep_composite_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).get_sleep_composite();
