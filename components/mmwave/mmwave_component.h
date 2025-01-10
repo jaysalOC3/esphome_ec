@@ -4,6 +4,7 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/number/number.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 #include <vector>
 #include <deque> // For storing multiple packets
 
@@ -42,7 +43,7 @@ namespace esphome
             void set_position_sensor(text_sensor::TextSensor *position_sensor) { position_text_sensor_ = position_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
-            void set_presence_sensor(MMWaveNumber *presence_sensor) { presence_sensor_ = presence_sensor; }
+            void set_presence_sensor(binary_sensor::BinarySensor *presence_sensor) { presence_sensor_ = presence_sensor; }
             void set_sleep_state_sensor(MMWaveNumber *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
             void set_average_respiration_sensor(MMWaveNumber *average_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
             void set_average_heartbeat_sensor(MMWaveNumber *average_heartbeat_sensor) { average_heartbeat_sensor_ = average_heartbeat_sensor; }
@@ -104,7 +105,7 @@ namespace esphome
             text_sensor::TextSensor *position_text_sensor_{nullptr};
             text_sensor::TextSensor *movement_sensor_{nullptr};
 
-            MMWaveNumber *presence_sensor_{nullptr};
+            binary_sensor::BinarySensor *presence_sensor_{nullptr};
             MMWaveNumber *sleep_state_sensor_{nullptr};
             MMWaveNumber *average_respiration_sensor_{nullptr};
             MMWaveNumber *average_heartbeat_sensor_{nullptr};
