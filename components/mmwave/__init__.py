@@ -156,49 +156,49 @@ async def to_code(config):
     if CONF_PRESENCE_SENSOR_ID in config:
         conf = config[CONF_PRESENCE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_presence_sensor(sens))
 
     if CONF_SLEEP_STATE_SENSOR_ID in config:
         conf = config[CONF_SLEEP_STATE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_sleep_state_sensor(sens))
 
     if CONF_AVERAGE_RESPIRATION_SENSOR_ID in config:
         conf = config[CONF_AVERAGE_RESPIRATION_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_average_respiration_sensor(sens))
 
     if CONF_AVERAGE_HEARTBEAT_SENSOR_ID in config:
         conf = config[CONF_AVERAGE_HEARTBEAT_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_average_heartbeat_sensor(sens))
 
     if CONF_TURNOVER_SENSOR_ID in config:
         conf = config[CONF_TURNOVER_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_turnover_sensor(sens))
 
     if CONF_LARGE_BODYMOVE_SENSOR_ID in config:
         conf = config[CONF_LARGE_BODYMOVE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_large_bodymove_sensor(sens))
 
     if CONF_MINOR_BODYMOVE_SENSOR_ID in config:
         conf = config[CONF_MINOR_BODYMOVE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_minor_bodymove_sensor(sens))
 
     if CONF_APNEA_EVENTS_SENSOR_ID in config:
         conf = config[CONF_APNEA_EVENTS_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf)
+        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
         cg.add(var.set_apnea_events_sensor(sens))
 
     if CONF_HUMAN_PRESENCE_SENSOR_ID in config: 
