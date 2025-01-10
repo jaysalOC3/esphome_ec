@@ -22,7 +22,7 @@ text_sensor:
     reset_reason:
       name: "Reset Reason"
 
-number:
+sensor:
 
 binary_sensor:
 
