@@ -9,6 +9,7 @@ mmwave_component_ns = cg.esphome_ns.namespace("mmwave_ns")
 MMWaveComponent = mmwave_component_ns.class_(
     "MMWaveComponent", cg.Component, uart.UARTDevice
 )
+MMWaveNumber = mmwave_component_ns.class_("MMWaveNumber", number.Number)
 
 CONF_PACKET_TEXT_SENSOR_ID = "packet_text_sensor_id"
 CONF_CONFIG_TEXT_SENSOR_ID = "config_text_sensor_id"
@@ -57,55 +58,55 @@ CONFIG_SCHEMA = (
             ),
             cv.Optional(CONF_PRESENCE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_SLEEP_STATE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_AVERAGE_HEARTBEAT_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_TURNOVER_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_LARGE_BODYMOVE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_MINOR_BODYMOVE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
             cv.Optional(CONF_APNEA_EVENTS_SENSOR_ID): number.NUMBER_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(number.Number),
+                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
