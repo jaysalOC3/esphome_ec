@@ -22,6 +22,8 @@ text_sensor:
     reset_reason:
       name: "Reset Reason"
 
+number:
+
 # Enable Home Assistant API
 api:
   encryption:
@@ -63,6 +65,30 @@ mmwave:
   movement_sensor_id:
     id: mmwave_movement_sensor
     name: "Movement Rate"
+  presence_sensor_id:
+    id: mmwave_presence_sensor
+    name: "Presence"
+  sleep_state_sensor_id:
+    id: mmwave_sleep_state_sensor
+    name: "Sleep State"
+  average_respiration_sensor_id:
+    id: mmwave_average_respiration_sensor
+    name: "Average Respiration"
+  average_heartbeat_sensor_id:
+    id: mmwave_average_heartbeat_sensor
+    name: "Average Heartbeat"
+  turnover_sensor_id:
+    id: mmwave_turnover_sensor
+    name: "Turnover"
+  large_bodymove_sensor_id:
+    id: mmwave_large_bodymove_sensor
+    name: "Large Body Movement"
+  minor_bodymove_sensor_id:
+    id: mmwave_minor_bodymove_sensor
+    name: "Minor Body Movement"
+  apnea_events_sensor_id:
+    id: mmwave_apnea_events_sensor
+    name: "Apnea Events"
   
 button:
   - platform: template
@@ -90,10 +116,18 @@ button:
             id(mmwave_component).sensor_restart();
 
   - platform: template
-    name: "Send Sleep Command"
+    name: "Set Sleep Mode"
     id: sleep_command_btn 
     on_press: 
       then:
         - lambda: |-
             id(mmwave_component).send_sleep_mode_command();
+
+  - platform: template
+    name: "Get Sleep Composite"
+    id: sleep_composite_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).get_sleep_composite();
 

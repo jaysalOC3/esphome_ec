@@ -3,6 +3,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/text_sensor/text_sensor.h"
+#include "esphome/components/number/number.h"
 #include <vector>
 #include <deque> // For storing multiple packets
 
@@ -24,11 +25,22 @@ namespace esphome
             void start_work_mode();
             void sensor_restart();
             void send_sleep_mode_command();
+            void get_sleep_composite();
 
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_config_text_sensor(text_sensor::TextSensor *config_sensor) { config_text_sensor_ = config_sensor; }
             void set_position_sensor(text_sensor::TextSensor *position_sensor) { position_text_sensor_ = position_sensor; }
             void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
+
+            void set_presence_sensor(number::Number *presence_sensor) { presence_sensor_ = presence_sensor; }
+            void set_sleep_state_sensor(number::Number *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
+            void set_average_respiration_sensor(number::Number *average_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
+            void set_average_heartbeat_sensor(number::Number *average_heartbeat_sensor) { average_heartbeat_sensor_ = average_heartbeat_sensor; }
+            void set_turnover_sensor(number::Number *turnover_sensor) { turnover_sensor_ = turnover_sensor; }
+            void set_large_bodymove_sensor(number::Number *large_bodymove_sensor) { large_bodymove_sensor_ = large_bodymove_sensor; }
+            void set_minor_bodymove_sensor(number::Number *minor_bodymove_sensor) { minor_bodymove_sensor_ = minor_bodymove_sensor; }
+            void set_apnea_events_sensor(number::Number *apnea_events_sensor) { apnea_events_sensor_ = apnea_events_sensor; }
+
 
             void set_num_packets_to_store(int num_packets) { num_packets_to_store_ = num_packets; }
 
@@ -38,7 +50,7 @@ namespace esphome
             void process_movement_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_position_data(const std::vector<uint8_t>& payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t>& payload);
-            void process_cfg_one_data(const std::vector<uint8_t> &payload);
+            void process_sleep_composite(const std::vector<uint8_t> &payload);
             void handle_uart_data();
             uint8_t sumData(uint8_t len, uint8_t *buf);
             static const uint32_t PACKET_TIMEOUT_MS = 25; // Timeout in milliseconds
@@ -50,6 +62,7 @@ namespace esphome
             enum DeviceState
             {
                 STATE_POWER_ON,
+                STATE_SLEEP,
                 STATE_SENSOR_INIT,
                 STATE_SENSOR_CHG_MODE,
                 STATE_SENSOR_SLEEP_MODE,
@@ -71,6 +84,9 @@ namespace esphome
             };
 
             ParseState state_{STATE_HEADER_START};
+            DeviceState device_state_{STATE_POWER_ON};
+            DeviceState device_state_history{STATE_SLEEP};
+
             std::vector<uint8_t> data_;
             uint16_t data_length_{0};
 
@@ -79,6 +95,15 @@ namespace esphome
             text_sensor::TextSensor *position_text_sensor_{nullptr}; 
             text_sensor::TextSensor *movement_sensor_{nullptr};
 
+            number::Number *presence_sensor_{nullptr};
+            number::Number *sleep_state_sensor_{nullptr};
+            number::Number *average_respiration_sensor_{nullptr};
+            number::Number *average_heartbeat_sensor_{nullptr};
+            number::Number *turnover_sensor_{nullptr};
+            number::Number *large_bodymove_sensor_{nullptr};
+            number::Number *minor_bodymove_sensor_{nullptr};
+            number::Number *apnea_events_sensor_{nullptr};
+            
             std::deque<std::string> received_packets_;
             int num_packets_to_store_{5}; // Default to storing 5 packets
         };
