@@ -9,18 +9,8 @@ esp32:
 
 # Enable logging
 logger:
-  level: VERY_VERBOSE
-  baud_rate: 115200
-
-debug:
-  update_interval: 5s 
 
 text_sensor:
-  - platform: debug
-    device:
-      name: "Device Info" 
-    reset_reason:
-      name: "Reset Reason"
 
 sensor:
 
@@ -67,30 +57,30 @@ mmwave:
   movement_sensor_id:
     id: mmwave_movement_sensor
     name: "Movement Rate"
-  presence_sensor_id:
-    id: mmwave_presence_sensor
-    name: "Presence"
-  sleep_state_sensor_id:
-    id: mmwave_sleep_state_sensor
-    name: "Sleep State"
-  average_respiration_sensor_id:
-    id: mmwave_average_respiration_sensor
-    name: "Average Respiration"
-  average_heartbeat_sensor_id:
-    id: mmwave_average_heartbeat_sensor
-    name: "Average Heartbeat"
-  turnover_sensor_id:
-    id: mmwave_turnover_sensor
-    name: "Turnover"
-  large_bodymove_sensor_id:
-    id: mmwave_large_bodymove_sensor
-    name: "Large Body Movement"
-  minor_bodymove_sensor_id:
-    id: mmwave_minor_bodymove_sensor
-    name: "Minor Body Movement"
-  apnea_events_sensor_id:
-    id: mmwave_apnea_events_sensor
-    name: "Apnea Events"
+  # presence_sensor_id:
+  #   id: mmwave_presence_sensor
+  #   name: "Presence"
+  # sleep_state_sensor_id:
+  #   id: mmwave_sleep_state_sensor
+  #   name: "Sleep State"
+  # average_respiration_sensor_id:
+  #   id: mmwave_average_respiration_sensor
+  #   name: "Average Respiration"
+  # average_heartbeat_sensor_id:
+  #   id: mmwave_average_heartbeat_sensor
+  #   name: "Average Heartbeat"
+  # turnover_sensor_id:
+  #   id: mmwave_turnover_sensor
+  #   name: "Turnover"
+  # large_bodymove_sensor_id:
+  #   id: mmwave_large_bodymove_sensor
+  #   name: "Large Body Movement"
+  # minor_bodymove_sensor_id:
+  #   id: mmwave_minor_bodymove_sensor
+  #   name: "Minor Body Movement"
+  # apnea_events_sensor_id:
+  #   id: mmwave_apnea_events_sensor
+  #   name: "Apnea Events"
   
 button:
   - platform: template
