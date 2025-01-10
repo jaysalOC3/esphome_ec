@@ -4,6 +4,7 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/number/number.h"
+#include "esphome/components/sensor/sensor.h"
 #include <vector>
 #include <deque> // For storing multiple packets
 
@@ -40,7 +41,7 @@ namespace esphome
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_config_text_sensor(text_sensor::TextSensor *config_sensor) { config_text_sensor_ = config_sensor; }
             void set_position_sensor(text_sensor::TextSensor *position_sensor) { position_text_sensor_ = position_sensor; }
-            void set_movement_sensor(text_sensor::TextSensor *movement_sensor) { movement_sensor_ = movement_sensor; }
+            void set_movement_sensor(sensor::Sensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
             void set_presence_sensor(MMWaveNumber *presence_sensor) { presence_sensor_ = presence_sensor; }
             void set_sleep_state_sensor(MMWaveNumber *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
@@ -102,7 +103,7 @@ namespace esphome
             text_sensor::TextSensor *packet_text_sensor_{nullptr};
             text_sensor::TextSensor *config_text_sensor_{nullptr};
             text_sensor::TextSensor *position_text_sensor_{nullptr};
-            text_sensor::TextSensor *movement_sensor_{nullptr};
+            sensor::Sensor *movement_sensor_{nullptr};
 
             MMWaveNumber *presence_sensor_{nullptr};
             MMWaveNumber *sleep_state_sensor_{nullptr};

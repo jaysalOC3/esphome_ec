@@ -340,7 +340,7 @@ namespace esphome
 
             if (movement_sensor_ != nullptr)
             {
-                movement_sensor_->publish_state(std::to_string(data_[6]));
+                movement_sensor_->publish_state(data_[6]);
             }
             else
             {
