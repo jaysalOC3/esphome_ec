@@ -372,7 +372,7 @@ namespace esphome
                          presence, sleepState, averageRespiration, averageHeartbeat, turnoverNumber, largeBodyMove, minorBodyMove, apneaEvents);
 
                 if (presence_sensor_ != nullptr)
-                    presence_sensor_->publish_state(presence);
+                    presence_sensor_->publish_state(presence == 1);
                 if (sleep_state_sensor_ != nullptr)
                     sleep_state_sensor_->publish_state(sleepState);
                 if (average_respiration_sensor_ != nullptr)

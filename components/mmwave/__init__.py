@@ -1,6 +1,8 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
+
 from esphome.components import uart, text_sensor, binary_sensor, button, number, sensor
+
 from esphome.const import CONF_ID, CONF_NAME, CONF_ON_PRESS
 
 DEPENDENCIES = ["uart", "text_sensor", "binary_sensor", "button", "number", "sensor"]
@@ -9,7 +11,6 @@ mmwave_component_ns = cg.esphome_ns.namespace("mmwave_ns")
 MMWaveComponent = mmwave_component_ns.class_(
     "MMWaveComponent", cg.Component, uart.UARTDevice
 )
-MMWaveNumber = mmwave_component_ns.class_("MMWaveNumber", number.Number)
 
 CONF_PACKET_TEXT_SENSOR_ID = "packet_text_sensor_id"
 CONF_CONFIG_TEXT_SENSOR_ID = "config_text_sensor_id"
@@ -56,57 +57,57 @@ CONFIG_SCHEMA = (
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_PRESENCE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_PRESENCE_SENSOR_ID): binary_sensor.BINARY_SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(binary_sensor.BinarySensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_SLEEP_STATE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_SLEEP_STATE_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_AVERAGE_HEARTBEAT_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_AVERAGE_HEARTBEAT_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_TURNOVER_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_TURNOVER_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_LARGE_BODYMOVE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_LARGE_BODYMOVE_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_MINOR_BODYMOVE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_MINOR_BODYMOVE_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_APNEA_EVENTS_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_APNEA_EVENTS_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
@@ -154,56 +155,56 @@ async def to_code(config):
         await sensor.register_sensor(sens, conf)
         cg.add(var.set_movement_sensor(sens))
 
-    if CONF_PRESENCE_SENSOR_ID in config:
-        conf = config[CONF_PRESENCE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_presence_sensor(sens))
+    # if CONF_PRESENCE_SENSOR_ID in config:
+    #     conf = config[CONF_PRESENCE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await binary_sensor.register_binary_sensor(sens, conf)
+    #     cg.add(var.set_presence_sensor(sens))
 
-    if CONF_SLEEP_STATE_SENSOR_ID in config:
-        conf = config[CONF_SLEEP_STATE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_sleep_state_sensor(sens))
+    # if CONF_SLEEP_STATE_SENSOR_ID in config:
+    #     conf = config[CONF_SLEEP_STATE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_sleep_state_sensor(sens))
 
-    if CONF_AVERAGE_RESPIRATION_SENSOR_ID in config:
-        conf = config[CONF_AVERAGE_RESPIRATION_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_average_respiration_sensor(sens))
+    # if CONF_AVERAGE_RESPIRATION_SENSOR_ID in config:
+    #     conf = config[CONF_AVERAGE_RESPIRATION_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_average_respiration_sensor(sens))
 
-    if CONF_AVERAGE_HEARTBEAT_SENSOR_ID in config:
-        conf = config[CONF_AVERAGE_HEARTBEAT_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_average_heartbeat_sensor(sens))
+    # if CONF_AVERAGE_HEARTBEAT_SENSOR_ID in config:
+    #     conf = config[CONF_AVERAGE_HEARTBEAT_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_average_heartbeat_sensor(sens))
 
-    if CONF_TURNOVER_SENSOR_ID in config:
-        conf = config[CONF_TURNOVER_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_turnover_sensor(sens))
+    # if CONF_TURNOVER_SENSOR_ID in config:
+    #     conf = config[CONF_TURNOVER_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_turnover_sensor(sens))
 
-    if CONF_LARGE_BODYMOVE_SENSOR_ID in config:
-        conf = config[CONF_LARGE_BODYMOVE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_large_bodymove_sensor(sens))
+    # if CONF_LARGE_BODYMOVE_SENSOR_ID in config:
+    #     conf = config[CONF_LARGE_BODYMOVE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_large_bodymove_sensor(sens))
 
-    if CONF_MINOR_BODYMOVE_SENSOR_ID in config:
-        conf = config[CONF_MINOR_BODYMOVE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_minor_bodymove_sensor(sens))
+    # if CONF_MINOR_BODYMOVE_SENSOR_ID in config:
+    #     conf = config[CONF_MINOR_BODYMOVE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_minor_bodymove_sensor(sens))
 
-    if CONF_APNEA_EVENTS_SENSOR_ID in config:
-        conf = config[CONF_APNEA_EVENTS_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
-        cg.add(var.set_apnea_events_sensor(sens))
+    # if CONF_APNEA_EVENTS_SENSOR_ID in config:
+    #     conf = config[CONF_APNEA_EVENTS_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await sensor.register_sensor(sens, conf)
+    #     cg.add(var.set_apnea_events_sensor(sens))
 
-    if CONF_HUMAN_PRESENCE_SENSOR_ID in config: 
-        conf = config[CONF_HUMAN_PRESENCE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await binary_sensor.register_binary_sensor(sens, conf)
-        cg.add(var.set_human_presence_sensor(sens)) 
+    # if CONF_HUMAN_PRESENCE_SENSOR_ID in config: 
+    #     conf = config[CONF_HUMAN_PRESENCE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await binary_sensor.register_binary_sensor(sens, conf)
+    #     cg.add(var.set_human_presence_sensor(sens)) 
