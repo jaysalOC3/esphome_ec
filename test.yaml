@@ -24,6 +24,8 @@ text_sensor:
 
 number:
 
+binary_sensor:
+
 # Enable Home Assistant API
 api:
   encryption:
