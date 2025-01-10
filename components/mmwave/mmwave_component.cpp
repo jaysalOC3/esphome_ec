@@ -160,6 +160,13 @@ namespace esphome
 
             switch (cmd)
             {
+            case 0x01:
+                if (data_[3] == 0x83)
+                {
+                    ESP_LOGVV(TAG, "Initialization Successful.", cmd);
+                    packet_text_sensor_->publish_state("Initialization Successful.");
+                }
+                break;
             case 0x80:
                 if (data_[3] == 0x03)
                 {
