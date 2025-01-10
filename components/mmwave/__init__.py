@@ -1,9 +1,11 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, text_sensor, binary_sensor, button, sensor
+
+from esphome.components import uart, text_sensor, binary_sensor, button, number, sensor
+
 from esphome.const import CONF_ID, CONF_NAME, CONF_ON_PRESS
 
-DEPENDENCIES = ["uart"]
+DEPENDENCIES = ["uart", "text_sensor", "binary_sensor", "button", "number", "sensor"]
 
 mmwave_component_ns = cg.esphome_ns.namespace("mmwave_ns")
 MMWaveComponent = mmwave_component_ns.class_(
@@ -49,9 +51,9 @@ CONFIG_SCHEMA = (
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_MOVEMENT_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
+            cv.Optional(CONF_MOVEMENT_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 {
-                    cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
+                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
@@ -150,7 +152,7 @@ async def to_code(config):
     if CONF_MOVEMENT_SENSOR_ID in config:
         conf = config[CONF_MOVEMENT_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await text_sensor.register_text_sensor(sens, conf)
+        await sensor.register_sensor(sens, conf)
         cg.add(var.set_movement_sensor(sens))
 
     # if CONF_PRESENCE_SENSOR_ID in config:
