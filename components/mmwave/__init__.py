@@ -56,9 +56,9 @@ CONFIG_SCHEMA = (
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_PRESENCE_SENSOR_ID): number.NUMBER_SCHEMA.extend(
+            cv.Optional(CONF_PRESENCE_SENSOR_ID): binary_sensor.BINARY_SENSOR_SCHEMA.extend(
                 { 
-                    cv.GenerateID(): cv.declare_id(MMWaveNumber),
+                    cv.GenerateID(): cv.declare_id(binary_sensor.BinarySensor),
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
@@ -157,7 +157,7 @@ async def to_code(config):
     if CONF_PRESENCE_SENSOR_ID in config:
         conf = config[CONF_PRESENCE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
-        await number.register_number(sens, conf, min_value=0, max_value=255, step=1)
+        await binary_sensor.register_binary_sensor(sens, conf)
         cg.add(var.set_presence_sensor(sens))
 
     if CONF_SLEEP_STATE_SENSOR_ID in config:
