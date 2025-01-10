@@ -44,7 +44,7 @@ namespace esphome
 
             void set_presence_sensor(MMWaveNumber *presence_sensor) { presence_sensor_ = presence_sensor; }
             void set_sleep_state_sensor(MMWaveNumber *sleep_state_sensor) { sleep_state_sensor_ = sleep_state_sensor; }
-            void set_average_respiration_sensor(MMWaveNumberaverage_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
+            void set_average_respiration_sensor(MMWaveNumber average_respiration_sensor) { average_respiration_sensor_ = average_respiration_sensor; }
             void set_average_heartbeat_sensor(MMWaveNumber *average_heartbeat_sensor) { average_heartbeat_sensor_ = average_heartbeat_sensor; }
             void set_turnover_sensor(MMWaveNumber *turnover_sensor) { turnover_sensor_ = turnover_sensor; }
             void set_large_bodymove_sensor(MMWaveNumber *large_bodymove_sensor) { large_bodymove_sensor_ = large_bodymove_sensor; }
