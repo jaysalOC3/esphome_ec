@@ -27,7 +27,7 @@ class MMWaveSensor : public sensor::Sensor, public PollingComponent, public uart
  protected:
   bool begin();
   bool config_work_mode(uint8_t mode);
-  uint8_t get_work_mode();
+  uint8_t start_work_mode();
   bool config_led_light(uint8_t led, uint8_t state);
   uint8_t get_led_light_state(uint8_t led);
   bool sensor_reset();

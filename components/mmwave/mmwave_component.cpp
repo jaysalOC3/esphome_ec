@@ -167,6 +167,23 @@ namespace esphome
                     packet_text_sensor_->publish_state("Initialization Successful.");
                 }
                 break;
+            case 0x02:
+                if (data_[3] == 0x83)
+                {
+                    ESP_LOGVV(TAG, "Work mode switch successful.", cmd);
+                    packet_text_sensor_->publish_state("Work mode switch successful.");
+                }
+                if (data_[3] == 0xA8)
+                {
+                    if (data_[6] == 0x02){
+                        ESP_LOGVV(TAG, "Work mode switch successful.", cmd);
+                        packet_text_sensor_->publish_state("Work mode switch successful.");
+                    }else{
+                        ESP_LOGVV(TAG, "Work mode switch failed.", cmd);
+                        packet_text_sensor_->publish_state("Work mode switch failed.");
+                    }
+                }
+                break;
             case 0x80:
                 if (data_[3] == 0x03)
                 {
@@ -186,10 +203,7 @@ namespace esphome
             case 0x85:
                 process_engineering_data(payload);
                 break;
-            case 0x02:
-                ESP_LOGVV(TAG, "Command 2 and Instruction data avalible.", cmd);
-                process_cfg_one_data(payload);
-                break;
+            
             default:
                 ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
                 std::stringstream ss;
@@ -308,7 +322,7 @@ namespace esphome
             delay(50);
         }
 
-        void MMWaveComponent::get_work_mode()
+        void MMWaveComponent::start_work_mode()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));

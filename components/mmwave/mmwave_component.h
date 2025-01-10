@@ -21,7 +21,7 @@ namespace esphome
 
             void begin();
             void send_command();
-            void get_work_mode();
+            void start_work_mode();
             void sensor_restart();
             void send_sleep_mode_command();
 

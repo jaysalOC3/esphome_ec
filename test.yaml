@@ -74,12 +74,12 @@ button:
             id(mmwave_component).begin();
 
   - platform: template
-    name: "MMWave Get Work Mode"
+    name: "MMWave Start Work Mode"
     id: mmwave_control_btn 
     on_press: 
       then:
         - lambda: |-
-            id(mmwave_component).get_work_mode();
+            id(mmwave_component).start_work_mode();
 
   - platform: template
     name: "Sensor Restart"
