@@ -153,11 +153,11 @@ async def to_code(config):
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_movement_sensor(sens))
 
-    if CONF_PRESENCE_SENSOR_ID in config:
-        conf = config[CONF_PRESENCE_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await binary_sensor.register_binary_sensor(sens, conf)
-        cg.add(var.set_presence_sensor(sens))
+    # if CONF_PRESENCE_SENSOR_ID in config:
+    #     conf = config[CONF_PRESENCE_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await binary_sensor.register_binary_sensor(sens, conf)
+    #     cg.add(var.set_presence_sensor(sens))
 
     # if CONF_SLEEP_STATE_SENSOR_ID in config:
     #     conf = config[CONF_SLEEP_STATE_SENSOR_ID]
