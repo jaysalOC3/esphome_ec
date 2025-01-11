@@ -47,7 +47,6 @@ namespace esphome
 
         private:
             void process_packet();
-            void process_presence_data(const std::vector<uint8_t> &payload); // Will now just store the packet
             void process_movement_data(const std::vector<uint8_t> &payload); // Will now just store the packet
             void process_position_data(const std::vector<uint8_t> &payload); // Will now just store the packet
             void process_engineering_data(const std::vector<uint8_t> &payload);

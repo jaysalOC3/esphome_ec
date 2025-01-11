@@ -292,30 +292,6 @@ namespace esphome
             }
         }
 
-        void MMWaveComponent::process_presence_data(const std::vector<uint8_t> &payload)
-        {
-            ESP_LOGV(TAG, "Processing presence data packets");
-
-            if (packet_text_sensor_ != nullptr)
-            {
-                packet_text_sensor_->publish_state(std::to_string(data_[6]));
-            }
-            else
-            {
-                ESP_LOGW(TAG, "Packet text sensor not initialized yet!");
-            }
-
-            if (presence_sensor_ != nullptr)
-            {
-                bool presence_state = (data_[6] == 1);
-                presence_sensor_->publish_state(presence_state);
-            }
-            else
-            {
-                ESP_LOGW(TAG, "Presence sensor not initialized yet!");
-            }
-        }
-
         void MMWaveComponent::process_position_data(const std::vector<uint8_t> &payload)
         {
             ESP_LOGV(TAG, "Processing position data packets");
