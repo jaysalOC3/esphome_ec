@@ -81,7 +81,7 @@ namespace esphome
 
         void MMWaveComponent::handle_uart_data()
         {
-            static const uint8_t MAX_PACKET_SIZE = 16;
+            static const uint8_t MAX_PACKET_SIZE = 32;
             static const uint8_t HEADER_SIZE = 6; // SY + Config + Command + Length(2)
             uint8_t cfg = 0;
             uint8_t cmd = 0;
