@@ -143,11 +143,11 @@ async def to_code(config):
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_config_text_sensor(sens))
 
-    if CONF_POSITION_TEXT_SENSOR_ID in config:
-        conf = config[CONF_POSITION_TEXT_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await text_sensor.register_text_sensor(sens, conf)
-        cg.add(var.set_position_sensor(sens))
+    # if CONF_POSITION_TEXT_SENSOR_ID in config:
+    #     conf = config[CONF_POSITION_TEXT_SENSOR_ID]
+    #     sens = cg.new_Pvariable(conf[CONF_ID])
+    #     await text_sensor.register_text_sensor(sens, conf)
+    #     cg.add(var.set_position_sensor(sens))
 
     if CONF_MOVEMENT_SENSOR_ID in config:
         conf = config[CONF_MOVEMENT_SENSOR_ID]
