@@ -267,7 +267,7 @@ namespace esphome
             case 0x84:
                 if (data_[3] == 0x8D)
                 {
-                    ESP_LOGVD(TAG, "SleepComposite data avalible.", cmd);
+                    ESP_LOGD(TAG, "SleepComposite data avalible.", cmd);
                     packet_text_sensor_->publish_state("SleepComposite data avalible.");
                     process_sleep_composite(payload);
                 }
