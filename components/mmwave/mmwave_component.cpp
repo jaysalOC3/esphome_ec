@@ -354,11 +354,11 @@ namespace esphome
                 int minorBodyMove = payload[6];
                 int apneaEvents = payload[7];
 
-                ESP_LOGV(TAG, "Publishing sleep composite data: presence=%d, sleepState=%d, averageRespiration=%d, averageHeartbeat=%d, turnoverNumber=%d, largeBodyMove=%d, minorBodyMove=%d, apneaEvents=%d",
+                ESP_LOGD(TAG, "Publishing sleep composite data: presence=%d, sleepState=%d, averageRespiration=%d, averageHeartbeat=%d, turnoverNumber=%d, largeBodyMove=%d, minorBodyMove=%d, apneaEvents=%d",
                          presence, sleepState, averageRespiration, averageHeartbeat, turnoverNumber, largeBodyMove, minorBodyMove, apneaEvents);
 
                 if (presence_sensor_ != nullptr)
-                    presence_sensor_->publish_state(presence == 1);
+                    presence_sensor_->publish_state(presence == true);
                 if (sleep_state_sensor_ != nullptr)
                     sleep_state_sensor_->publish_state(sleepState);
                 if (average_respiration_sensor_ != nullptr)
