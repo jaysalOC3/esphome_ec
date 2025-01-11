@@ -161,11 +161,11 @@ async def to_code(config):
         await binary_sensor.register_binary_sensor(sens, conf)
         cg.add(var.set_presence_sensor(sens))
 
-    # if CONF_SLEEP_STATE_SENSOR_ID in config:
-    #     conf = config[CONF_SLEEP_STATE_SENSOR_ID]
-    #     sens = cg.new_Pvariable(conf[CONF_ID])
-    #     await sensor.register_sensor(sens, conf)
-    #     cg.add(var.set_sleep_state_sensor(sens))
+    if CONF_SLEEP_STATE_SENSOR_ID in config:
+        conf = config[CONF_SLEEP_STATE_SENSOR_ID]
+        sens = cg.new_Pvariable(conf[CONF_ID])
+        await sensor.register_sensor(sens, conf)
+        cg.add(var.set_sleep_state_sensor(sens))
 
     # if CONF_AVERAGE_RESPIRATION_SENSOR_ID in config:
     #     conf = config[CONF_AVERAGE_RESPIRATION_SENSOR_ID]
