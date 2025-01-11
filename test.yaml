@@ -10,12 +10,6 @@ esp32:
 # Enable logging
 logger:
 
-text_sensor:
-
-sensor:
-
-binary_sensor:
-
 # Enable Home Assistant API
 api:
   encryption:
@@ -45,43 +39,38 @@ uart:
 mmwave:
   id: mmwave_component
   uart_id: uart_bus
-  packet_text_sensor_id:
-    id: mmwave_packets_text_sensor
-    name: "Unknown Packets"
-  config_text_sensor_id:
-    id: mmwave_config_text_sensor
-    name: "Config Packets"
-  position_text_sensor_id:
-    id: mmwave_position_text_sensor
-    name: "Position Packets"
-  movement_sensor_id:
-    id: mmwave_movement_sensor
-    name: "Movement Rate"
-  # presence_sensor_id:
-  #   id: mmwave_presence_sensor
-  #   name: "Presence"
-  # sleep_state_sensor_id:
-  #   id: mmwave_sleep_state_sensor
-  #   name: "Sleep State"
-  # average_respiration_sensor_id:
-  #   id: mmwave_average_respiration_sensor
-  #   name: "Average Respiration"
-  # average_heartbeat_sensor_id:
-  #   id: mmwave_average_heartbeat_sensor
-  #   name: "Average Heartbeat"
-  # turnover_sensor_id:
-  #   id: mmwave_turnover_sensor
-  #   name: "Turnover"
-  # large_bodymove_sensor_id:
-  #   id: mmwave_large_bodymove_sensor
-  #   name: "Large Body Movement"
-  # minor_bodymove_sensor_id:
-  #   id: mmwave_minor_bodymove_sensor
-  #   name: "Minor Body Movement"
-  # apnea_events_sensor_id:
-  #   id: mmwave_apnea_events_sensor
-  #   name: "Apnea Events"
   
+  # Text sensors
+  packet_text_sensor_id:
+    name: "MMWave Packet Data"
+  config_text_sensor_id:
+    name: "MMWave Config Data"
+  movement_sensor_id:
+    name: "Movement Rate"
+  position_text_sensor_id:
+    name: "Position Data"
+    
+  # Binary sensors
+  presence_sensor_id:
+    name: "Presence"
+    
+  # Number sensors
+  sleep_state_sensor_id:
+    name: "Sleep State"
+  average_respiration_sensor_id:
+    name: "Average Respiration"
+  average_heartbeat_sensor_id:
+    name: "Average Heartbeat" 
+  turnover_sensor_id:
+    name: "Turnover"
+  large_bodymove_sensor_id:
+    name: "Large Body Movement"
+  minor_bodymove_sensor_id:
+    name: "Minor Body Movement"
+  apnea_events_sensor_id:
+    name: "Apnea Events"
+
+
 button:
   - platform: template
     name: "MMWave Begin"
@@ -100,6 +89,14 @@ button:
             id(mmwave_component).start_work_mode();
 
   - platform: template
+    name: "Send Sleep Command"
+    id: sleep_command_btn 
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_sleep_mode_command();
+
+  - platform: template
     name: "Sensor Restart"
     id: mmwave_sensor_restart_btn 
     on_press: 
@@ -108,18 +105,14 @@ button:
             id(mmwave_component).sensor_restart();
 
   - platform: template
-    name: "Set Sleep Mode"
-    id: sleep_command_btn 
-    on_press: 
-      then:
-        - lambda: |-
-            id(mmwave_component).send_sleep_mode_command();
-
-  - platform: template
     name: "Get Sleep Composite"
     id: sleep_composite_btn 
     on_press: 
       then:
         - lambda: |-
             id(mmwave_component).get_sleep_composite();
-
+            
+sensor:
+number:
+binary_sensor:
+text_sensor:
