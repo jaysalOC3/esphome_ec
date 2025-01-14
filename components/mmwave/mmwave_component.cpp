@@ -380,6 +380,17 @@ namespace esphome
             }
         }
 
+        void MMWaveComponent::send_command()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x66, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x00");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
         void MMWaveComponent::begin()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x83, 0x00, 0x01, 0x0f, 0x40, 0x54, 0x43};
@@ -388,18 +399,7 @@ namespace esphome
             ESP_LOGV(TAG, "Sent Begin: 0x0f");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(50);
-        }
-
-        void MMWaveComponent::send_command()
-        {
-            uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x0f, 0x54, 0x43};
-            this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
-            ESP_LOGV(TAG, "Sent command: 0x00");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
-            delay(50);
+            delay(1);
         }
 
         void MMWaveComponent::start_work_mode()
@@ -409,7 +409,7 @@ namespace esphome
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(50);
+            delay(1);
         }
 
         void MMWaveComponent::sensor_restart()
@@ -419,7 +419,7 @@ namespace esphome
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(50);
+            delay(1);
         }
 
         void MMWaveComponent::get_sleep_composite()
@@ -429,7 +429,7 @@ namespace esphome
             ESP_LOGV(TAG, "Send Sleep Composite: 0x84 0x8D, 0x0f");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(50);
+            delay(1);
         }
 
         void MMWaveComponent::send_sleep_mode_command()
