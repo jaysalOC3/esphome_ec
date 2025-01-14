@@ -258,8 +258,14 @@ namespace esphome
                 }
                 break;
             case 0x81:
-                ESP_LOGVV(TAG, "Command 81 and Instruction data avalible.", cfg);
-                process_position_data(payload);
+                if (data_[3] == 0x02)
+                {
+                    int d = data_[6];
+                    ESP_LOGD(TAG, "Respiration data avalible.", cfg);
+                    packet_text_sensor_->publish_state("Respiration data avalible.");
+                    if (average_respiration_sensor_ != nullptr)
+                    average_respiration_sensor_->publish_state(d);
+                }
                 break;
             case 0x84:
                 if (data_[3] == 0x8D)
@@ -270,7 +276,14 @@ namespace esphome
                 }
                 break;
             case 0x85:
-                process_engineering_data(payload);
+                if (data_[3] == 0x02)
+                {
+                    int d = data_[6];
+                    ESP_LOGD(TAG, "Heartbeat data avalible.", cfg);
+                    packet_text_sensor_->publish_state("Heartbeat data avalible.");
+                    if (average_heartbeat_sensor_ != nullptr)
+                    average_heartbeat_sensor_->publish_state(d);
+                }
                 break;
 
             default:
@@ -361,10 +374,7 @@ namespace esphome
                     presence_sensor_->publish_state(presence == true);
                 if (sleep_state_sensor_ != nullptr)
                     sleep_state_sensor_->publish_state(sleepState);
-                if (average_respiration_sensor_ != nullptr)
-                    average_respiration_sensor_->publish_state(averageRespiration);
-                if (average_heartbeat_sensor_ != nullptr)
-                    average_heartbeat_sensor_->publish_state(averageHeartbeat);
+                
             }
             else
             {
