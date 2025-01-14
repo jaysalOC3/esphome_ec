@@ -12,7 +12,7 @@ namespace esphome
 
         static const char *TAG = "mmwave";
 
-        MMWaveComponent::MMWaveComponent()
+        MMWaveComponent::MMWaveComponent() : device_state_(DeviceState::STATE_SENSOR_INIT)
         {
             data_.reserve(32); // Pre-allocate space for typical packet size
         }
@@ -21,11 +21,6 @@ namespace esphome
         {
             ESP_LOGV(TAG, "Setting up MMWave component...");
 
-            // Schedule a callback to change DeviceState to Init 10 seconds after boot
-            this->set_timeout("init_state", 5000, [this]()
-                              {
-                this->device_state_ = DeviceState::STATE_SENSOR_INIT;
-                ESP_LOGI(TAG, "Device state changed to STATE_SENSOR_INIT after 10 seconds"); });
             // Configure UART buffer size if needed
             // this->uart_->set_rx_buffer_size(64);  // Uncomment and adjust if needed
 
@@ -38,44 +33,46 @@ namespace esphome
 
         void MMWaveComponent::loop()
         {
-            if (device_state_ != DeviceState::STATE_SENSOR_ERROR || device_state_ != DeviceState::STATE_POWER_ON)
+            // Check for packet timeout
+            if (state_ != ParseState::STATE_HEADER_START &&
+                (millis() - last_byte_time_) > PACKET_TIMEOUT_MS)
             {
-                // Check for packet timeout
-                if (state_ != ParseState::STATE_HEADER_START &&
-                    (millis() - last_byte_time_) > PACKET_TIMEOUT_MS)
-                {
-                    ESP_LOGW(TAG, "Packet timeout - resetting parser");
-                    data_.clear();
-                    state_ = ParseState::STATE_HEADER_START;
-                }
+                ESP_LOGW(TAG, "Packet timeout - resetting parser");
+                data_.clear();
+                state_ = ParseState::STATE_HEADER_START;
+            }
 
-                handle_uart_data();
+            handle_uart_data();
 
-                // Process DeviceState
-                switch (device_state_)
-                {
-                case DeviceState::STATE_SENSOR_INIT:
-                    ESP_LOGV(TAG, "Device state: STATE_SENSOR_INIT");
-                    device_state_history = DeviceState::STATE_SENSOR_CHG_MODE;
-                    device_state_ = DeviceState::STATE_SLEEP;
-                    this->begin();
-                    break;
-                case DeviceState::STATE_SENSOR_CHG_MODE:
-                    ESP_LOGV(TAG, "Device state: STATE_SENSOR_CHG_MODE");
-                    device_state_history = DeviceState::STATE_SENSOR_SLEEP_MODE;
-                    device_state_ = DeviceState::STATE_SLEEP;
-                    this->start_work_mode();
-                    break;
-                case DeviceState::STATE_SENSOR_SLEEP_MODE:
-                    ESP_LOGV(TAG, "Device state: STATE_SENSOR_SLEEP_MODE");
-                    device_state_history = DeviceState::STATE_SENSOR_ERROR;
-                    device_state_ = DeviceState::STATE_SLEEP;
-                    this->send_sleep_mode_command();
-                    break;
-                case DeviceState::STATE_SLEEP:
-                    delay(1);
-                    break;
-                }
+            // Process DeviceState
+            switch (device_state_)
+            {
+            case DeviceState::STATE_SENSOR_INIT:
+                ESP_LOGV(TAG, "Device state: STATE_SENSOR_INIT");
+                this->begin();
+                device_state_ = DeviceState::STATE_SENSOR_CHG_MODE;
+                break;
+
+            case DeviceState::STATE_SENSOR_CHG_MODE:
+                ESP_LOGV(TAG, "Device state: STATE_SENSOR_CHG_MODE");
+                this->start_work_mode();
+                device_state_ = DeviceState::STATE_SENSOR_SLEEP_MODE;
+                break;
+
+            case DeviceState::STATE_SENSOR_SLEEP_MODE:
+                ESP_LOGV(TAG, "Device state: STATE_SENSOR_SLEEP_MODE");
+                this->send_sleep_mode_command();
+                device_state_ = DeviceState::STATE_SLEEP;
+                break;
+
+            case DeviceState::STATE_SLEEP:
+                // Handle any actions needed during sleep (if any)
+                delay(1000); // Short delay to prevent tight loop in sleep
+                break;
+
+            case DeviceState::STATE_SENSOR_ERROR:
+                // Handle error state (e.g., attempt to recover)
+                break;
             }
         }
 
@@ -184,28 +181,28 @@ namespace esphome
             uint16_t data_length = (data_[4] << 8) | data_[5];
             // ESP_LOGVV(TAG, "Data length from packet: %d bytes", data_length);
 
-            uint8_t cmd = data_[2];
-            // ESP_LOGVV(TAG, "Command: 0x%02X, Instruction: 0x%02X packets", cmd, data_[3]);
+            uint8_t cfg = data_[2];
+            // ESP_LOGVV(TAG, "Config: 0x%02X, Command: 0x%02X packets", cfg, data_[3]);
 
             // Now the payload is simply a view into the existing data_ vector
             const uint8_t *payload_start = data_.data() + 6;
             size_t payload_size = data_length;
             std::vector<uint8_t> payload(payload_start, payload_start + payload_size);
 
-            switch (cmd)
+            switch (cfg)
             {
             case 0x01:
                 if (data_[3] == 0x02)
                 {
                     if (data_[6] == 0x0F)
                     {
-                        ESP_LOGVV(TAG, "Sleep Mode successful.", cmd);
+                        ESP_LOGVV(TAG, "Sleep Mode successful.", cfg);
                         device_state_ = device_state_history;
                         packet_text_sensor_->publish_state("Sleep Mode successful.");
                     }
                     else
                     {
-                        ESP_LOGVV(TAG, "Sleep Mode failed.", cmd);
+                        ESP_LOGVV(TAG, "Sleep Mode failed.", cfg);
                         delay(250);
                         device_state_ = DeviceState::STATE_SENSOR_SLEEP_MODE;
                         packet_text_sensor_->publish_state("Sleep Mode failed.");
@@ -215,12 +212,12 @@ namespace esphome
                 {
                     if (data_[6] == 0x01)
                     {
-                        ESP_LOGVV(TAG, "LED On.", cmd);
+                        ESP_LOGVV(TAG, "LED On.", cfg);
                         packet_text_sensor_->publish_state("LED On.");
                     }
                     else
                     {
-                        ESP_LOGVV(TAG, "Initialization Successful.", cmd);
+                        ESP_LOGVV(TAG, "Initialization Successful.", cfg);
                         packet_text_sensor_->publish_state("Initialization Successful.");
                     }
                 }
@@ -228,20 +225,20 @@ namespace esphome
             case 0x02:
                 if (data_[3] == 0x83)
                 {
-                    ESP_LOGVV(TAG, "Work mode switch successful.", cmd);
+                    ESP_LOGVV(TAG, "Work mode switch successful.", cfg);
                     packet_text_sensor_->publish_state("Work mode switch successful.");
                 }
                 if (data_[3] == 0xA8)
                 {
                     if (data_[6] == 0x02)
                     {
-                        ESP_LOGVV(TAG, "Work mode switch successful.", cmd);
+                        ESP_LOGVV(TAG, "Work mode switch successful.", cfg);
                         device_state_ = device_state_history;
                         packet_text_sensor_->publish_state("Work mode switch successful.");
                     }
                     else
                     {
-                        ESP_LOGVV(TAG, "Work mode switch failed.", cmd);
+                        ESP_LOGVV(TAG, "Work mode switch failed.", cfg);
                         delay(250);
                         device_state_ = DeviceState::STATE_SENSOR_CHG_MODE;
                         packet_text_sensor_->publish_state("Work mode switch failed.");
@@ -251,23 +248,23 @@ namespace esphome
             case 0x80:
                 if (data_[3] == 0x03)
                 {
-                    ESP_LOGVV(TAG, "Command 80 and Instruction 03 data avalible.", cmd);
+                    ESP_LOGVV(TAG, "Command 80 and Instruction 03 data avalible.", cfg);
                     process_movement_data(payload);
                 }
                 if (data_[3] == 0x05)
                 {
-                    ESP_LOGVV(TAG, "Command 80 and Instruction 05 data avalible.", cmd);
+                    ESP_LOGVV(TAG, "Command 80 and Instruction 05 data avalible.", cfg);
                     process_position_data(payload);
                 }
                 break;
             case 0x81:
-                ESP_LOGVV(TAG, "Command 81 and Instruction data avalible.", cmd);
+                ESP_LOGVV(TAG, "Command 81 and Instruction data avalible.", cfg);
                 process_position_data(payload);
                 break;
             case 0x84:
                 if (data_[3] == 0x8D)
                 {
-                    ESP_LOGD(TAG, "SleepComposite data avalible.", cmd);
+                    ESP_LOGD(TAG, "SleepComposite data avalible.", cfg);
                     packet_text_sensor_->publish_state("SleepComposite data avalible.");
                     process_sleep_composite(payload);
                 }
@@ -277,7 +274,7 @@ namespace esphome
                 break;
 
             default:
-                ESP_LOGW(TAG, "Unknown command received: 0x%02X", cmd);
+                ESP_LOGW(TAG, "Unknown command received: 0x%02X", cfg);
                 std::stringstream ss;
                 ss << "cfg: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[2]) << " ";
                 ss << "cmd: " << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned>(data_[3]) << " ";
