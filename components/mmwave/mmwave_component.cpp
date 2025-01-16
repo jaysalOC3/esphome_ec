@@ -400,6 +400,61 @@ namespace esphome
             delay(50);
         }
 
+        void MMWaveComponent::send_command_8081()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x81, 0x00, 0x01, 0x0f, 0xBD, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x80 0x81");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
+        void MMWaveComponent::send_command_8082()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x82, 0x00, 0x01, 0x0f, 0xBE, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x80 0x82");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
+        void MMWaveComponent::send_command_8083()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x83, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x80 0x83");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
+        void MMWaveComponent::send_command_8182()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x81, 0x82, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x80 0x83");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
+        void MMWaveComponent::send_command_8582()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x85, 0x82, 0x00, 0x01, 0x0f, 0xC3, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            state_ = ParseState::STATE_HEADER_START;
+            ESP_LOGV(TAG, "Sent command: 0x80 0x83");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(50);
+        }
+
         void MMWaveComponent::begin()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x83, 0x00, 0x01, 0x0f, 0x40, 0x54, 0x43};

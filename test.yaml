@@ -97,6 +97,41 @@ button:
             id(mmwave_component).send_sleep_mode_command();
 
   - platform: template
+    name: "Send Command 8081"
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command_8081();
+
+  - platform: template
+    name: "Send Command 8082"
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command_8082();
+
+  - platform: template
+    name: "Send Command 8083"
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command_8083();
+
+  - platform: template
+    name: "Send Command 8182"
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command_8182();
+
+  - platform: template
+    name: "Send Command 8582"
+    on_press: 
+      then:
+        - lambda: |-
+            id(mmwave_component).send_command_8582();
+
+  - platform: template
     name: "Sensor Restart"
     id: mmwave_sensor_restart_btn 
     on_press: 
