@@ -86,8 +86,6 @@ namespace esphome
             while (this->available())
             {
                 uint8_t c = this->read();
-
-                // ESP_LOGVV(TAG, "Received byte: 0x%02X", c); // Log every received byte
                 last_byte_time_ = millis();
 
                 if (data_.size() >= MAX_PACKET_SIZE)
@@ -256,6 +254,21 @@ namespace esphome
                     ESP_LOGVV(TAG, "Sleep Composite Date Avalible.", cfg);
                     process_sleep_composite(payload);
                 }
+                if (data_[3] == 0x81)
+                {
+                    ESP_LOGVV(TAG, "Existing Information.", cfg);
+                    if (presence_sensor_ != nullptr)
+                    {
+                        if (data_[6] == 0x01)
+                        {
+                            presence_sensor_->publish_state(true);
+                        }
+                        else
+                        {
+                            presence_sensor_->publish_state(false);
+                        }
+                    }
+                }
                 break;
             case 0x81:
                 if (data_[3] == 0x02)
@@ -264,7 +277,7 @@ namespace esphome
                     ESP_LOGD(TAG, "Respiration data avalible.", cfg);
                     packet_text_sensor_->publish_state("Respiration data avalible.");
                     if (average_respiration_sensor_ != nullptr)
-                    average_respiration_sensor_->publish_state(d);
+                        average_respiration_sensor_->publish_state(d);
                 }
                 break;
             case 0x84:
@@ -282,7 +295,7 @@ namespace esphome
                     ESP_LOGD(TAG, "Heartbeat data avalible.", cfg);
                     packet_text_sensor_->publish_state("Heartbeat data avalible.");
                     if (average_heartbeat_sensor_ != nullptr)
-                    average_heartbeat_sensor_->publish_state(d);
+                        average_heartbeat_sensor_->publish_state(d);
                 }
                 break;
 
@@ -359,22 +372,16 @@ namespace esphome
                 int sleepState = payload[1];
                 int averageRespiration = payload[2];
                 int averageHeartbeat = payload[3];
-                //int turnoverNumber = payload[4];
-                //int largeBodyMove = payload[5];
-                //int minorBodyMove = payload[6];
-                //int apneaEvents = payload[7];
+                // int turnoverNumber = payload[4];
+                // int largeBodyMove = payload[5];
+                // int minorBodyMove = payload[6];
+                // int apneaEvents = payload[7];
 
-                //ESP_LOGD(TAG, "Publishing sleep composite data: presence=%d, sleepState=%d, averageRespiration=%d, averageHeartbeat=%d, turnoverNumber=%d, largeBodyMove=%d, minorBodyMove=%d, apneaEvents=%d",
-                //         presence, sleepState, averageRespiration, averageHeartbeat, turnoverNumber, largeBodyMove, minorBodyMove, apneaEvents);
+                // ESP_LOGD(TAG, "Publishing sleep composite data: presence=%d, sleepState=%d, averageRespiration=%d, averageHeartbeat=%d, turnoverNumber=%d, largeBodyMove=%d, minorBodyMove=%d, apneaEvents=%d",
+                //          presence, sleepState, averageRespiration, averageHeartbeat, turnoverNumber, largeBodyMove, minorBodyMove, apneaEvents);
 
                 ESP_LOGD(TAG, "Publishing sleep composite data: presence=%d, sleepState=%d, averageRespiration=%d, averageHeartbeat=%d",
                          presence, sleepState, averageRespiration, averageHeartbeat);
-
-                if (presence_sensor_ != nullptr)
-                    presence_sensor_->publish_state(presence == true);
-                if (sleep_state_sensor_ != nullptr)
-                    sleep_state_sensor_->publish_state(sleepState);
-                
             }
             else
             {
