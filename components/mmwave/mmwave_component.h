@@ -37,6 +37,7 @@ namespace esphome
             void set_packet_text_sensor(text_sensor::TextSensor *packet_sensor) { packet_text_sensor_ = packet_sensor; }
             void set_config_text_sensor(text_sensor::TextSensor *config_sensor) { config_text_sensor_ = config_sensor; }
             void set_position_sensor(text_sensor::TextSensor *position_sensor) { position_text_sensor_ = position_sensor; }
+            void set_motion_sensor(text_sensor::TextSensor *motion_sensor) { motion_sensor_ = motion_sensor; }
             void set_movement_sensor(sensor::Sensor *movement_sensor) { movement_sensor_ = movement_sensor; }
 
             void set_presence_sensor(binary_sensor::BinarySensor *presence_sensor) { presence_sensor_ = presence_sensor; }
@@ -98,6 +99,7 @@ namespace esphome
             text_sensor::TextSensor *packet_text_sensor_{nullptr};
             text_sensor::TextSensor *config_text_sensor_{nullptr};
             text_sensor::TextSensor *position_text_sensor_{nullptr};
+            text_sensor::TextSensor *motion_sensor_{nullptr};
             sensor::Sensor *movement_sensor_{nullptr};
 
             binary_sensor::BinarySensor *presence_sensor_{nullptr};

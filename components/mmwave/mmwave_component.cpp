@@ -269,6 +269,28 @@ namespace esphome
                         }
                     }
                 }
+                if (data_[3] == 0x82)
+                {
+                    ESP_LOGVV(TAG, "Existing Information.", cfg);
+                    if (motion_sensor_ != nullptr)
+                    {
+                        switch (data_[6])
+                        {
+                        case 0x00:
+                            motion_sensor_->publish_state("None");
+                            break;
+                        case 0x01:
+                            motion_sensor_->publish_state("Still");
+                            break;
+                        case 0x02:
+                            motion_sensor_->publish_state("Active");
+                            break;
+                        default:
+                            motion_sensor_->publish_state("Read Error");
+                            break;
+                        }
+                    }
+                }
                 break;
             case 0x81:
                 if (data_[3] == 0x02)

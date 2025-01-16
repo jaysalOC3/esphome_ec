@@ -18,6 +18,7 @@ CONF_POSITION_TEXT_SENSOR_ID = "position_text_sensor_id"
 CONF_MOVEMENT_SENSOR_ID = "movement_sensor_id"
 
 CONF_PRESENCE_SENSOR_ID = "presence_sensor_id"
+CONF_MOTION_SENSOR_ID = "motion_sensor_id"
 CONF_SLEEP_STATE_SENSOR_ID = "sleep_state_sensor_id"
 CONF_AVERAGE_RESPIRATION_SENSOR_ID = "average_respiration_sensor_id"
 CONF_AVERAGE_HEARTBEAT_SENSOR_ID = "average_heartbeat_sensor_id"
@@ -46,6 +47,12 @@ CONFIG_SCHEMA = (
                 }
             ),
             cv.Optional(CONF_POSITION_TEXT_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
+                {
+                    cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
+                    cv.Optional(CONF_NAME): cv.string,
+                }
+            ),
+            cv.Optional(CONF_MOTION_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
                 {
                     cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
                     cv.Optional(CONF_NAME): cv.string,
@@ -139,6 +146,12 @@ async def to_code(config):
 
     if CONF_CONFIG_TEXT_SENSOR_ID in config:
         conf = config[CONF_CONFIG_TEXT_SENSOR_ID]
+        sens = cg.new_Pvariable(conf[CONF_ID])
+        await text_sensor.register_text_sensor(sens, conf)
+        cg.add(var.set_config_text_sensor(sens))
+
+    if CONF_MOTION_SENSOR_ID in config:
+        conf = config[CONF_MOTION_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_config_text_sensor(sens))
