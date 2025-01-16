@@ -118,18 +118,18 @@ button:
             id(mmwave_component).send_command_8083();
 
   - platform: template
-    name: "Send Command 8182"
+    name: "Get Heartbeat"
     on_press: 
       then:
         - lambda: |-
-            id(mmwave_component).send_command_8182();
+            id(mmwave_component).get_heartbeat();
 
   - platform: template
-    name: "Send Command 8582"
+    name: "Get Resparation"
     on_press: 
       then:
         - lambda: |-
-            id(mmwave_component).send_command_8582();
+            id(mmwave_component).get_respiration();
 
   - platform: template
     name: "Sensor Restart"

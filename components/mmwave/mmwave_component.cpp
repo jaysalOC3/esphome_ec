@@ -433,7 +433,7 @@ namespace esphome
             delay(50);
         }
 
-        void MMWaveComponent::send_command_8182()
+        void MMWaveComponent::get_heartbeat()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x81, 0x82, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
@@ -444,7 +444,7 @@ namespace esphome
             delay(50);
         }
 
-        void MMWaveComponent::send_command_8582()
+        void MMWaveComponent::get_respiration()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x85, 0x82, 0x00, 0x01, 0x0f, 0xC3, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));

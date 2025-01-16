@@ -27,8 +27,8 @@ namespace esphome
             void send_command_8081();
             void send_command_8082();
             void send_command_8083();
-            void send_command_8182();
-            void send_command_8582();
+            void get_heartbeat();
+            void get_respiration();
             void start_work_mode();
             void sensor_restart();
             void send_sleep_mode_command();
