@@ -498,7 +498,7 @@ namespace esphome
             ESP_LOGV(TAG, "Sent Begin: 0x0f");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(1);
+            delay(5000);
         }
 
         void MMWaveComponent::start_work_mode()
@@ -508,7 +508,7 @@ namespace esphome
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(1);
+            delay(5000);
         }
 
         void MMWaveComponent::sensor_restart()
@@ -518,7 +518,7 @@ namespace esphome
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
             data_.clear();
             state_ = ParseState::STATE_HEADER_START;
-            delay(1);
+            delay(5000);
         }
 
         void MMWaveComponent::sensor_led()

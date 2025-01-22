@@ -1,3 +1,7 @@
+# Tools
+
+Use repomix.com to send code to AI.
+
 uart:
   id: uart_bus
   tx_pin: GPIO21
