@@ -218,12 +218,11 @@ namespace esphome
                 {
                     if (data_[6] == 0x01)
                     {
-                        ESP_LOGVV(TAG, "Begin Done.", cfg);
-                        packet_text_sensor_->publish_state("Begin Done.");
                         if (device_state_ == DeviceState::STATE_SENSOR_INIT)
-                        {                                                      
+                        {
                             device_state_ = DeviceState::STATE_SENSOR_CHG_MODE; // Transition if "Begin Done" after init
                             ESP_LOGI(TAG, "Device initialized, transitioning to STATE_SENSOR_CHG_MODE");
+                            packet_text_sensor_->publish_state("Device initialized, transitioning to STATE_SENSOR_CHG_MODE");
                         }
                     }
                     else
@@ -236,22 +235,23 @@ namespace esphome
             case 0x02:
                 if (data_[3] == 0x83)
                 {
-                    ESP_LOGVV(TAG, "Work mode switch successful.", cfg);
-                    packet_text_sensor_->publish_state("Work mode switch successful.");
+                    if (device_state_ == DeviceState::STATE_SENSOR_CHG_MODE)
+                    {
+                        device_state_ = DeviceState::STATE_SENSOR_SLEEP_MODE;
+                        ESP_LOGI(TAG, "Work mode Changed, transitioning to STATE_SENSOR_SLEEP_MODE");
+                        packet_text_sensor_->publish_state("Work mode Changed, transitioning to STATE_SENSOR_SLEEP_MODE");
+                    }
                 }
                 if (data_[3] == 0xA8)
                 {
                     if (data_[6] == 0x02)
                     {
                         ESP_LOGVV(TAG, "Work mode switch successful.", cfg);
-                        device_state_ = device_state_history;
                         packet_text_sensor_->publish_state("Work mode switch successful.");
                     }
                     else
                     {
                         ESP_LOGVV(TAG, "Work mode switch failed.", cfg);
-                        delay(250);
-                        device_state_ = DeviceState::STATE_SENSOR_CHG_MODE;
                         packet_text_sensor_->publish_state("Work mode switch failed.");
                     }
                 }
