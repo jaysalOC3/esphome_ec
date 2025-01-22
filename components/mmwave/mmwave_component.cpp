@@ -428,10 +428,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x00");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -439,10 +436,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x81, 0x00, 0x01, 0x0f, 0xBD, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x80 0x81");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -450,10 +444,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x82, 0x00, 0x01, 0x0f, 0xBE, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x80 0x82");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -461,10 +452,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x83, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -472,10 +460,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x81, 0x82, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -483,10 +468,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x85, 0x82, 0x00, 0x01, 0x0f, 0xC3, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(50);
         }
 
@@ -494,10 +476,7 @@ namespace esphome
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x83, 0x00, 0x01, 0x0f, 0x40, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
-            state_ = ParseState::STATE_HEADER_START;
             ESP_LOGV(TAG, "Sent Begin: 0x0f");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(5000);
         }
 
@@ -506,8 +485,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(5000);
         }
 
@@ -516,8 +493,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(5000);
         }
 
@@ -526,8 +501,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(1);
         }
 
@@ -536,8 +509,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x84, 0x8D, 0x00, 0x01, 0x0F, 0xCD, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sleep Composite: 0x84 0x8D, 0x0f");
-            data_.clear();
-            state_ = ParseState::STATE_HEADER_START;
             delay(1);
         }
 
