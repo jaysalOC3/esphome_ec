@@ -50,7 +50,6 @@ namespace esphome
             case DeviceState::STATE_SENSOR_INIT:
                 ESP_LOGV(TAG, "Device state: STATE_SENSOR_INIT");
                 this->begin();
-                device_state_ = DeviceState::STATE_SENSOR_CHG_MODE;
                 break;
 
             case DeviceState::STATE_SENSOR_CHG_MODE:
@@ -206,17 +205,31 @@ namespace esphome
                         packet_text_sensor_->publish_state("Sleep Mode failed.");
                     }
                 }
+                if (data_[3] == 0x03)
+                {
+                    if (data_[6] == 0x01)
+                    {
+                        ESP_LOGVV(TAG, "Reset successful.", cfg);
+                        device_state_ = device_state_history;
+                        packet_text_sensor_->publish_state("Reset successful.");
+                    }
+                }
                 if (data_[3] == 0x83)
                 {
                     if (data_[6] == 0x01)
                     {
-                        ESP_LOGVV(TAG, "LED On.", cfg);
-                        packet_text_sensor_->publish_state("LED On.");
+                        ESP_LOGVV(TAG, "Begin Done.", cfg);
+                        packet_text_sensor_->publish_state("Begin Done.");
+                        if (device_state_ == DeviceState::STATE_SENSOR_INIT)
+                        {                                                      
+                            device_state_ = DeviceState::STATE_SENSOR_CHG_MODE; // Transition if "Begin Done" after init
+                            ESP_LOGI(TAG, "Device initialized, transitioning to STATE_SENSOR_CHG_MODE");
+                        }
                     }
                     else
                     {
-                        ESP_LOGVV(TAG, "Initialization Successful.", cfg);
-                        packet_text_sensor_->publish_state("Initialization Successful.");
+                        ESP_LOGVV(TAG, "Begin failed.", cfg);
+                        packet_text_sensor_->publish_state("Begin failed.");
                     }
                 }
                 break;
@@ -499,6 +512,16 @@ namespace esphome
         }
 
         void MMWaveComponent::sensor_restart()
+        {
+            uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
+            this->write_array(cmdBuf, sizeof(cmdBuf));
+            ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
+            data_.clear();
+            state_ = ParseState::STATE_HEADER_START;
+            delay(1);
+        }
+
+        void MMWaveComponent::sensor_led()
         {
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
