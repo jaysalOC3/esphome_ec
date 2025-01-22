@@ -31,6 +31,7 @@ namespace esphome
             void get_respiration();
             void start_work_mode();
             void sensor_restart();
+            void sensor_led();
             void send_sleep_mode_command();
             void get_sleep_composite();
 
