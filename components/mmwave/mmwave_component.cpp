@@ -511,18 +511,21 @@ namespace esphome
             ESP_LOGV(TAG, "Send Sleep Composite: 0x84 0x8D, 0x0f");
         }
 
-        void MMWaveComponent::send_sleep_mode_command()
-        {
-            // Start switching work mode
-            uint8_t cmdBufSleepConfig[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
-            this->write_array(cmdBufSleepConfig, sizeof(cmdBufSleepConfig));
-            ESP_LOGI(TAG, "Start switching work mode.");
+void MMWaveComponent::send_sleep_mode_command() {
+    // Switching work mode
+    uint8_t cmdBufSleepConfig[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
+    for (int i = 0; i < 4; ++i) {
+        this->write_array(cmdBufSleepConfig, sizeof(cmdBufSleepConfig));
+        ESP_LOGI(TAG, "Sent sleep config command.");
+    }
 
-            // Sleep Command
-            uint8_t cmdBufSleep[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
-            this->write_array(cmdBufSleep, sizeof(cmdBufSleep));
-            ESP_LOGI(TAG, "Sent sleep command.");
-        }
+    // Sleep Command
+    uint8_t cmdBufSleep[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
+    for (int i = 0; i < 3; ++i) {
+        this->write_array(cmdBufSleep, sizeof(cmdBufSleep));
+        ESP_LOGI(TAG, "Sent sleep command.");
+    }
+}
 
         void MMWaveComponent::dump_config()
         {
