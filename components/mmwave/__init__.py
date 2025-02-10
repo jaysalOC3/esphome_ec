@@ -52,12 +52,6 @@ CONFIG_SCHEMA = (
                     cv.Optional(CONF_NAME): cv.string,
                 }
             ),
-            cv.Optional(CONF_MOTION_SENSOR_ID): text_sensor.TEXT_SENSOR_SCHEMA.extend(
-                {
-                    cv.GenerateID(): cv.declare_id(text_sensor.TextSensor),
-                    cv.Optional(CONF_NAME): cv.string,
-                }
-            ),
             cv.Optional(CONF_MOVEMENT_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 {
                     cv.GenerateID(): cv.declare_id(sensor.Sensor),
@@ -71,12 +65,6 @@ CONFIG_SCHEMA = (
                 }
             ),
             cv.Optional(CONF_SLEEP_STATE_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
-                { 
-                    cv.GenerateID(): cv.declare_id(sensor.Sensor),
-                    cv.Optional(CONF_NAME): cv.string,
-                }
-            ),
-            cv.Optional(CONF_AVERAGE_RESPIRATION_SENSOR_ID): sensor.SENSOR_SCHEMA.extend(
                 { 
                     cv.GenerateID(): cv.declare_id(sensor.Sensor),
                     cv.Optional(CONF_NAME): cv.string,
@@ -150,14 +138,14 @@ async def to_code(config):
         await text_sensor.register_text_sensor(sens, conf)
         cg.add(var.set_config_text_sensor(sens))
 
-    if CONF_MOTION_SENSOR_ID in config:
-        conf = config[CONF_MOTION_SENSOR_ID]
-        sens = cg.new_Pvariable(conf[CONF_ID])
-        await text_sensor.register_text_sensor(sens, conf)
-        cg.add(var.set_config_text_sensor(sens))
+    #if CONF_MOTION_SENSOR_ID in config:
+    #    conf = config[CONF_MOTION_SENSOR_ID]
+    #    sens = cg.new_Pvariable(conf[CONF_ID])
+    #    await text_sensor.register_text_sensor(sens, conf)
+    #    cg.add(var.set_config_text_sensor(sens))
 
     # if CONF_POSITION_TEXT_SENSOR_ID in config:
-    #     conf = config[CONF_POSITION_TEXT_SENSOR_ID]
+    # conf = config[CONF_POSITION_TEXT_SENSOR_ID]
     #     sens = cg.new_Pvariable(conf[CONF_ID])
     #     await text_sensor.register_text_sensor(sens, conf)
     #     cg.add(var.set_position_sensor(sens))
@@ -220,4 +208,4 @@ async def to_code(config):
         conf = config[CONF_HUMAN_PRESENCE_SENSOR_ID]
         sens = cg.new_Pvariable(conf[CONF_ID])
         await binary_sensor.register_binary_sensor(sens, conf)
-        cg.add(var.set_human_presence_sensor(sens)) 
+        cg.add(var.set_human_presence_sensor(sens))

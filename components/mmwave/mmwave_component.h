@@ -65,6 +65,7 @@ namespace esphome
             uint16_t total_expected_bytes_{0};
             uint16_t bytes_remaining_{0};
             uint16_t expected_packet_size_{0};
+            uint32_t last_operation_time_{0};
 
             enum DeviceState
             {

@@ -65,12 +65,22 @@ namespace esphome
                 break;
 
             case DeviceState::STATE_SLEEP:
-                // Handle any actions needed during sleep (if any)
-                delay(1000); // Short delay to prevent tight loop in sleep
+                if (millis() - last_operation_time_ >= 1000)
+                {
+                    last_operation_time_ = millis();
+                    // Handle any actions needed during sleep (if any)
+                }
                 break;
 
             case DeviceState::STATE_SENSOR_ERROR:
-                // Handle error state (e.g., attempt to recover)
+                if (millis() - last_operation_time_ >= 5000)
+                {
+                    last_operation_time_ = millis();
+                    ESP_LOGE(TAG, "Device state: STATE_SENSOR_ERROR - Attempting to recover");
+                    // Attempt to recover (e.g., reset the sensor)
+                    this->sensor_restart();
+                    device_state_ = DeviceState::STATE_SENSOR_INIT;
+                }
                 break;
             }
         }
@@ -384,7 +394,7 @@ namespace esphome
 
             if (movement_sensor_ != nullptr)
             {
-                movement_sensor_->publish_state(data_[6]);
+                movement_sensor_->publish_state((float)data_[6]);
             }
             else
             {
@@ -429,7 +439,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0f, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x00");
-            delay(50);
         }
 
         void MMWaveComponent::send_command_8081()
@@ -437,7 +446,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x81, 0x00, 0x01, 0x0f, 0xBD, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x80 0x81");
-            delay(50);
         }
 
         void MMWaveComponent::send_command_8082()
@@ -445,7 +453,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x82, 0x00, 0x01, 0x0f, 0xBE, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x80 0x82");
-            delay(50);
         }
 
         void MMWaveComponent::send_command_8083()
@@ -453,7 +460,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x80, 0x83, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            delay(50);
         }
 
         void MMWaveComponent::get_heartbeat()
@@ -461,7 +467,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x81, 0x82, 0x00, 0x01, 0x0f, 0xBF, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            delay(50);
         }
 
         void MMWaveComponent::get_respiration()
@@ -469,7 +474,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x85, 0x82, 0x00, 0x01, 0x0f, 0xC3, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent command: 0x80 0x83");
-            delay(50);
         }
 
         void MMWaveComponent::begin()
@@ -477,7 +481,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x83, 0x00, 0x01, 0x0f, 0x40, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent Begin: 0x0f");
-            delay(5000);
         }
 
         void MMWaveComponent::start_work_mode()
@@ -485,7 +488,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Sent Get Work Mode: 0x80 0x0A");
-            delay(5000);
         }
 
         void MMWaveComponent::sensor_restart()
@@ -493,7 +495,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
-            delay(5000);
         }
 
         void MMWaveComponent::sensor_led()
@@ -501,7 +502,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x01, 0x03, 0x00, 0x01, 0x01, 0xB2, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sensor Restart: 0x01 0x02, 0x0f");
-            delay(1);
         }
 
         void MMWaveComponent::get_sleep_composite()
@@ -509,7 +509,6 @@ namespace esphome
             uint8_t cmdBuf[10] = {0x53, 0x59, 0x84, 0x8D, 0x00, 0x01, 0x0F, 0xCD, 0x54, 0x43};
             this->write_array(cmdBuf, sizeof(cmdBuf));
             ESP_LOGV(TAG, "Send Sleep Composite: 0x84 0x8D, 0x0f");
-            delay(1);
         }
 
         void MMWaveComponent::send_sleep_mode_command()
@@ -518,9 +517,6 @@ namespace esphome
             uint8_t cmdBufSleepConfig[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
             this->write_array(cmdBufSleepConfig, sizeof(cmdBufSleepConfig));
             ESP_LOGI(TAG, "Start switching work mode.");
-
-            // You might need a delay here, depending on the sensor's response time
-            delay(100); // Adjust delay as needed
 
             // Sleep Command
             uint8_t cmdBufSleep[10] = {0x53, 0x59, 0x02, 0xA8, 0x00, 0x01, 0x0F, 0x66, 0x54, 0x43};
