@@ -13,6 +13,9 @@ logger:
 text_sensor:
 
 sensor:
+  - platform: template
+    name: "Motion"
+    id: mmwave_motion_sensor
 
 binary_sensor:
 
@@ -81,7 +84,7 @@ mmwave:
   apnea_events_sensor_id:
     id: mmwave_apnea_events_sensor
     name: "Apnea Events"
-  
+
 button:
   - platform: template
     name: "MMWave Begin"
